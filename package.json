@@ -1,0 +1,28 @@
+{
+  "name": "connect-mongodb-session",
+  "version": "0.0.0",
+  "description": "MongoDB session store for connect built by MongoDB",
+  "keywords": [
+    "connect",
+    "mongo",
+    "mongodb",
+    "session",
+    "express"
+  ],
+  "author": "Valeri Karpov <val@karpov.io>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vkarpov15/connect-mongodb-session.git"
+  },
+  "dependencies": {
+    "mongodb": "1.4.22"
+  },
+  "devDependencies": {
+    "mocha": "2.0.1",
+    "connect": ">= 1.x"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "engines": "node >= 0.6.17"
+}
