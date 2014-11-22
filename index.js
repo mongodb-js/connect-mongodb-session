@@ -2,12 +2,31 @@ var mongodb = require('mongodb');
 
 module.exports = function(connect) {
   var Store = connect.Store || connect.session.Store;
+  var defaults = {
+    uri: 'mongodb://localhost:27017/test',
+    collection: 'sessions',
+    expires: 1000 * 60 * 60 * 24 * 14 // 2 weeks
+  };
 
   var MongoDBStore = function(options, callback) {
     var _this = this;
 
+    if (typeof options === 'function') {
+      callback = options;
+
+      options = {};
+      for (var key in defaults) {
+        options[key] = defaults[key];
+      }
+    } else {
+      options = options || {};
+      for (var key in defaults) {
+        options[key] = defaults[key];
+      }
+    }
+
     Store.call(this, options);
-    this._options = options;
+    this.options = options;
 
     mongodb.MongoClient.connect(options.uri, function(error, db) {
       if (error) {
@@ -29,12 +48,12 @@ module.exports = function(connect) {
             throw new Error('Error creating index: ' + error);
           }
 
-          return callback();
+          return callback && callback();
         });
     });
   };
 
-  MongoDBStore.prototype = Object.create(Store);
+  MongoDBStore.prototype = Object.create(Store.prototype);
 
   MongoDBStore.prototype.get = function(id, callback) {
     var _this = this;
