@@ -63,7 +63,7 @@ module.exports = function(connect) {
           return callback(error);
         } else if (session) {
           if (!session.expires || new Date < session.expires) {
-            return callback(session);
+            return callback(null, session.session);
           } else {
             return _this.destroy(id, callback);
           }
@@ -81,8 +81,16 @@ module.exports = function(connect) {
   };
 
   MongoDBStore.prototype.set = function(id, session, callback) {
-    var s = { _id: id, session: session };
+    var sess = {};
+    for (var key in session) {
+      if (key === 'cookie') {
+        sess[key] = session[key].toJSON ? session[key].toJSON() : session[key];
+      } else {
+        sess[key] = session[key];
+      }
+    }
 
+    var s = { _id: id, session: sess };
     if (session && session.cookie && session.cookie.expires) {
       s.expires = new Date(session.cookie.expires);
     } else {
