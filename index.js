@@ -17,12 +17,12 @@ module.exports = function(connect) {
 
       options = {};
       for (var key in defaults) {
-        options[key] = defaults[key];
+        options[key] = options[key] || defaults[key];
       }
     } else {
       options = options || {};
       for (var key in defaults) {
-        options[key] = defaults[key];
+        options[key] = options[key] || defaults[key];
       }
     }
 
@@ -58,6 +58,13 @@ module.exports = function(connect) {
 
   MongoDBStore.prototype.get = function(id, callback) {
     var _this = this;
+
+    if (!this.db) {
+      return process.nextTick(function() {
+        callback('Not connected');
+      });
+    }
+
     this.db.collection(this.options.collection).
       findOne({ _id: id }, function(error, session) {
         if (error) {
@@ -75,6 +82,12 @@ module.exports = function(connect) {
   };
 
   MongoDBStore.prototype.destroy = function(id, callback) {
+    if (!this.db) {
+      return process.nextTick(function() {
+        callback('Not connected');
+      });
+    }
+
     this.db.collection(this.options.collection).
       remove({ _id: id }, function(error) {
         callback && callback(error);
@@ -82,6 +95,12 @@ module.exports = function(connect) {
   };
 
   MongoDBStore.prototype.set = function(id, session, callback) {
+    if (!this.db) {
+      return process.nextTick(function() {
+        callback('Not connected');
+      });
+    }
+
     var sess = {};
     for (var key in session) {
       if (key === 'cookie') {
