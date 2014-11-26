@@ -5,6 +5,7 @@ module.exports = function(connect) {
   var defaults = {
     uri: 'mongodb://localhost:27017/test',
     collection: 'sessions',
+    connectionOptions: {},
     expires: 1000 * 60 * 60 * 24 * 14 // 2 weeks
   };
 
@@ -28,7 +29,7 @@ module.exports = function(connect) {
     Store.call(this, options);
     this.options = options;
 
-    mongodb.MongoClient.connect(options.uri, function(error, db) {
+    mongodb.MongoClient.connect(options.uri, options.connectionOptions, function(error, db) {
       if (error) {
         if (callback) {
           return callback(error);
