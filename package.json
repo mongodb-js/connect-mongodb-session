@@ -18,6 +18,7 @@
     "mongodb": "2.0.7"
   },
   "devDependencies": {
+    "acquit": "0.0.3",
     "mocha": "2.0.1",
     "connect": ">= 1.x",
     "express": "4.10.4",
