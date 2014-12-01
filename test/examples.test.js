@@ -22,6 +22,12 @@ describe('MongoDBStore', function() {
       });
   });
 
+  /**
+   *  If you pass in an instance of the
+   *  [`express-session` module](http://npmjs.org/package/express-session)
+   *  the MongoDBStore class will enable you to store your Express sessions
+   *  in MongoDB.
+   */
   it('can store sessions for Express 4', function(done) {
     var express = require('express');
 
