@@ -7,7 +7,7 @@ var blocks = acquit.parse(content);
 
 var mdOutput =
   '# connect-mongodb-session\n\n' +
-  '[MongoDB](http://mongodb.org)-backed session storage for ' +
+  '[MongoDB](http://mongodb.com)-backed session storage for ' +
   '[connect](https://www.npmjs.org/package/connect) and ' +
   '[Express](http://www.expressjs.com). Meant to be a ' +
   'well-maintained and fully-featured replacement for ' +
