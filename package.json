@@ -27,7 +27,7 @@
     "cookie": "0.1.2"
   },
   "scripts": {
-    "test": "make test"
+    "test": "./node_modules/mocha/bin/mocha ./test/examples.test.js"
   },
   "engines": "node >= 0.10.0"
 }
