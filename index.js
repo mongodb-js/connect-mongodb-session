@@ -1,4 +1,5 @@
 var mongodb = require('mongodb');
+var EventEmitter = require('events').EventEmitter;
 
 module.exports = function(connect) {
   var Store = connect.Store || connect.session.Store;
@@ -11,6 +12,7 @@ module.exports = function(connect) {
 
   var MongoDBStore = function(options, callback) {
     var _this = this;
+    this._emitter = new EventEmitter();
 
     if (typeof options === 'function') {
       callback = options;
@@ -49,6 +51,7 @@ module.exports = function(connect) {
             throw new Error('Error creating index: ' + error);
           }
 
+          _this._emitter.emit('connected');
           return callback && callback();
         });
     });
@@ -60,8 +63,8 @@ module.exports = function(connect) {
     var _this = this;
 
     if (!this.db) {
-      return process.nextTick(function() {
-        callback('Not connected');
+      return this._emitter.once('connected', function() {
+        _this.get.call(_this, id, callback);
       });
     }
 
@@ -83,8 +86,10 @@ module.exports = function(connect) {
 
   MongoDBStore.prototype.destroy = function(id, callback) {
     if (!this.db) {
-      return process.nextTick(function() {
-        callback('Not connected');
+      var _this = this;
+
+      return this._emitter.once('connected', function() {
+        _this.destroy.call(_this, id, callback);
       });
     }
 
@@ -96,8 +101,10 @@ module.exports = function(connect) {
 
   MongoDBStore.prototype.set = function(id, session, callback) {
     if (!this.db) {
-      return process.nextTick(function() {
-        callback('Not connected');
+      var _this = this;
+      
+      return this._emitter.once('connected', function() {
+        _this.set.call(_this, id, session, callback);
       });
     }
 

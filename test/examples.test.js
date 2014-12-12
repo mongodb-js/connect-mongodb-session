@@ -9,6 +9,8 @@ var mongodb = require('mongodb');
  *  store sessions in MongoDB.
  */
 describe('MongoDBStore', function() {
+  var underlyingDb;
+
   beforeEach(function(done) {
     mongodb.MongoClient.connect(
       'mongodb://localhost:27017/connect_mongodb_session_test',
@@ -16,6 +18,7 @@ describe('MongoDBStore', function() {
         if (error) {
           return done(error);
         }
+        underlyingDb = db;
         db.collection('mySessions').remove({}, function(error) {
           return done(error);
         });
@@ -56,7 +59,7 @@ describe('MongoDBStore', function() {
 
         var server = app.listen(3000);
 
-        store.db.collection('mySessions').count({}, function(error, count) {
+        underlyingDb.collection('mySessions').count({}, function(error, count) {
           assert.ifError(error);
           assert.equal(0, count);
 
@@ -65,7 +68,7 @@ describe('MongoDBStore', function() {
             assert.equal(1, response.headers['set-cookie'].length);
             var cookie = require('cookie').parse(response.headers['set-cookie'][0]);
             assert.ok(cookie['connect.sid']);
-            store.db.collection('mySessions').count({}, function(error, count) {
+            underlyingDb.collection('mySessions').count({}, function(error, count) {
               assert.ifError(error);
               assert.equal(1, count);
               server.close();
@@ -91,41 +94,38 @@ describe('MongoDBStore', function() {
       {
         uri: 'mongodb://localhost:27017/connect_mongodb_session_test',
         collection: 'mySessions'
+      });
+
+    app.use(express.session({
+      secret: 'This is a secret',
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
       },
-      function(error) {
+      store: store
+    }));
+
+    app.get('/', function(req, res) {
+      res.send('Hello ' + JSON.stringify(req.session));
+    });
+
+    var server = app.listen(3000);
+
+    underlyingDb.collection('mySessions').count({}, function(error, count) {
+      assert.ifError(error);
+      assert.equal(0, count);
+
+      request('http://localhost:3000', function(error, response, body) {
         assert.ifError(error);
-
-        app.use(express.session({
-          secret: 'This is a secret',
-          cookie: {
-            maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
-          },
-          store: store
-        }));
-
-        app.get('/', function(req, res) {
-          res.send('Hello ' + JSON.stringify(req.session));
-        });
-
-        var server = app.listen(3000);
-
-        store.db.collection('mySessions').count({}, function(error, count) {
+        assert.equal(1, response.headers['set-cookie'].length);
+        var cookie = require('cookie').parse(response.headers['set-cookie'][0]);
+        assert.ok(cookie['connect.sid']);
+        underlyingDb.collection('mySessions').count({}, function(error, count) {
           assert.ifError(error);
-          assert.equal(0, count);
-
-          request('http://localhost:3000', function(error, response, body) {
-            assert.ifError(error);
-            assert.equal(1, response.headers['set-cookie'].length);
-            var cookie = require('cookie').parse(response.headers['set-cookie'][0]);
-            assert.ok(cookie['connect.sid']);
-            store.db.collection('mySessions').count({}, function(error, count) {
-              assert.ifError(error);
-              assert.equal(1, count);
-              server.close();
-              done();
-            });
-          });
+          assert.equal(1, count);
+          server.close();
+          done();
         });
       });
+    });
   });
 });
