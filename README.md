@@ -15,6 +15,11 @@ If you pass in an instance of the
 the MongoDBStore class will enable you to store your Express sessions
 in MongoDB.
 
+**Note:** You can pass a callback to the `MongoDBStore` constructor,
+but this is entirely optional. The Express 3.x example demonstrates
+that you can use the MongoDBStore class in a synchronous-like style: the
+module will manage the internal connection state for you.
+
 ```javascript
     
     var express = require('express');
@@ -70,6 +75,11 @@ in MongoDB.
 If you're using Express 3.x, you need to pass the Express module itself
 rather than the `express-session` module. Session storage is part of
 the Express core in 3.x but not in 4.x.
+
+**Note:** This example doesn't pass a callback to the `MongoDBStore`
+constructor. This module can queue up requests to execute once the
+database is connected. However, the `MongoDBStore` constructor will
+throw an exception if it can't connect and no callback is passed.
 
 ```javascript
     
