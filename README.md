@@ -130,3 +130,43 @@ throw an exception if it can't connect and no callback is passed.
   
 ```
 
+#### It throws an error when it can't connect to MongoDB
+
+You should pass a callback to the `MongoDBStore` constructor to catch
+errors. If you don't pass a callback to the `MongoDBStore` constructor,
+`MongoDBStore` will `throw` if it can't connect.
+
+```javascript
+    
+    var express = require('../vendor/express-3.18.1');
+
+    var MongoDBStore = connectMongoDB(express);
+
+    var app = express();
+    var store = new MongoDBStore(
+      {
+        uri: 'mongodb://bad.host:27000/connect_mongodb_session_test',
+        collection: 'mySessions'
+      },
+      function(error) {
+        // Should have gotten an error
+        assert.ok(error);
+        done();
+      });
+
+    app.use(express.session({
+      secret: 'This is a secret',
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+      },
+      store: store
+    }));
+
+    app.get('/', function(req, res) {
+      res.send('Hello ' + JSON.stringify(req.session));
+    });
+
+    var server = app.listen(3000);
+  
+```
+
