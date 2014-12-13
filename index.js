@@ -31,7 +31,8 @@ module.exports = function(connect) {
     Store.call(this, options);
     this.options = options;
 
-    mongodb.MongoClient.connect(options.uri, options.connectionOptions, function(error, db) {
+    var connOptions = options.connectionOptions;
+    mongodb.MongoClient.connect(options.uri, connOptions, function(error, db) {
       if (error) {
         if (callback) {
           return callback(error);
