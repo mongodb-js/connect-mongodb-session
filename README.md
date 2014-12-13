@@ -2,13 +2,15 @@
 
 [MongoDB](http://mongodb.com)-backed session storage for [connect](https://www.npmjs.org/package/connect) and [Express](http://www.expressjs.com). Meant to be a well-maintained and fully-featured replacement for modules like [connect-mongo](https://www.npmjs.org/package/connect-mongo)
 
-### MongoDBStore
+# API
+
+## MongoDBStore
 
 This module exports a single function which takes an instance of connect
 (or Express) and returns a `MongoDBStore` class that can be used to
 store sessions in MongoDB.
 
-##### It can store sessions for Express 4
+#### It can store sessions for Express 4
 
 If you pass in an instance of the
 [`express-session` module](http://npmjs.org/package/express-session)
@@ -70,7 +72,7 @@ module will manage the internal connection state for you.
   
 ```
 
-##### It can store sessions for latest Express 3.x
+#### It can store sessions for latest Express 3.x
 
 If you're using Express 3.x, you need to pass the Express module itself
 rather than the `express-session` module. Session storage is part of

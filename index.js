@@ -131,5 +131,13 @@ module.exports = function(connect) {
       });
   };
 
+  MongoDBStore.prototype.on = function() {
+    this._emitter.on.apply(this._emitter, arguments);
+  };
+
+  MongoDBStore.prototype.once = function() {
+    this._emitter.once.apply(this._emitter, arguments);
+  };
+
   return MongoDBStore;
 };
