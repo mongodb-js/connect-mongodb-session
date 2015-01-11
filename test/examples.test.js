@@ -152,7 +152,7 @@ describe('MongoDBStore', function() {
     var app = express();
     var store = new MongoDBStore(
       {
-        uri: 'mongodb://bad.host:27000/connect_mongodb_session_test',
+        uri: 'mongodb://bad.host:27000/connect_mongodb_session_test?connectTimeoutMS=10',
         collection: 'mySessions'
       },
       function(error) {

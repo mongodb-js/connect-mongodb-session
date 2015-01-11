@@ -15,7 +15,7 @@
     "url": "https://github.com/vkarpov15/connect-mongodb-session.git"
   },
   "dependencies": {
-    "mongodb": "2.0.7"
+    "mongodb": "2.0.13"
   },
   "devDependencies": {
     "acquit": "0.0.3",
