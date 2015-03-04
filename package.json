@@ -1,6 +1,6 @@
 {
   "name": "connect-mongodb-session",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "MongoDB session store for connect built by MongoDB",
   "keywords": [
     "connect",
@@ -15,7 +15,7 @@
     "url": "https://github.com/vkarpov15/connect-mongodb-session.git"
   },
   "dependencies": {
-    "mongodb": "2.0.13"
+    "mongodb": "2.0.18"
   },
   "devDependencies": {
     "acquit": "0.0.3",
