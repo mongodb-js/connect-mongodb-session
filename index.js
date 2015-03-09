@@ -7,7 +7,8 @@ module.exports = function(connect) {
     uri: 'mongodb://localhost:27017/test',
     collection: 'sessions',
     connectionOptions: {},
-    expires: 1000 * 60 * 60 * 24 * 14 // 2 weeks
+    expires: 1000 * 60 * 60 * 24 * 14, // 2 weeks
+    idField: '_id'
   };
 
   var MongoDBStore = function(options, callback) {
@@ -60,6 +61,12 @@ module.exports = function(connect) {
 
   MongoDBStore.prototype = Object.create(Store.prototype);
 
+  MongoDBStore.prototype._generateQuery = function(id) {
+    var ret = {};
+    ret[this.idField] = id;
+    return ret;
+  };
+
   MongoDBStore.prototype.get = function(id, callback) {
     var _this = this;
 
@@ -70,7 +77,7 @@ module.exports = function(connect) {
     }
 
     this.db.collection(this.options.collection).
-      findOne({ _id: id }, function(error, session) {
+      findOne(this._generateQuery(id), function(error, session) {
         if (error) {
           return callback(error);
         } else if (session) {
@@ -95,7 +102,7 @@ module.exports = function(connect) {
     }
 
     this.db.collection(this.options.collection).
-      remove({ _id: id }, function(error) {
+      remove(this._generateQuery(id), function(error) {
         callback && callback(error);
       });
   };
@@ -118,7 +125,8 @@ module.exports = function(connect) {
       }
     }
 
-    var s = { _id: id, session: sess };
+    var s = this._generateQuery(id);
+    s.session = sess;
     if (session && session.cookie && session.cookie.expires) {
       s.expires = new Date(session.cookie.expires);
     } else {
@@ -127,7 +135,7 @@ module.exports = function(connect) {
     }
 
     this.db.collection(this.options.collection).
-      update({ _id: id }, s, { upsert: true }, function(error) {
+      update(this._generateQuery(id), s, { upsert: true }, function(error) {
         callback && callback(error);
       });
   };
