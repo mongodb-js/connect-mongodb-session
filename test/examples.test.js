@@ -46,42 +46,45 @@ describe('MongoDBStore', function() {
       { 
         uri: 'mongodb://localhost:27017/connect_mongodb_session_test',
         collection: 'mySessions'
+      });
+
+    // Don't emit error
+    store.on('error', function(error) {
+      assert.ifError(error);
+      assert.ok(false);
+    });
+
+    app.use(require('express-session')({
+      secret: 'This is a secret',
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
       },
-      function(error) {
+      store: store
+    }));
+
+    app.get('/', function(req, res) {
+      res.send('Hello ' + JSON.stringify(req.session));
+    });
+
+    var server = app.listen(3000);
+
+    underlyingDb.collection('mySessions').count({}, function(error, count) {
+      assert.ifError(error);
+      assert.equal(0, count);
+
+      request('http://localhost:3000', function(error, response, body) {
         assert.ifError(error);
-
-        app.use(require('express-session')({
-          secret: 'This is a secret',
-          cookie: {
-            maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
-          },
-          store: store
-        }));
-
-        app.get('/', function(req, res) {
-          res.send('Hello ' + JSON.stringify(req.session));
-        });
-
-        var server = app.listen(3000);
-
+        assert.equal(1, response.headers['set-cookie'].length);
+        var cookie = require('cookie').parse(response.headers['set-cookie'][0]);
+        assert.ok(cookie['connect.sid']);
         underlyingDb.collection('mySessions').count({}, function(error, count) {
           assert.ifError(error);
-          assert.equal(0, count);
-
-          request('http://localhost:3000', function(error, response, body) {
-            assert.ifError(error);
-            assert.equal(1, response.headers['set-cookie'].length);
-            var cookie = require('cookie').parse(response.headers['set-cookie'][0]);
-            assert.ok(cookie['connect.sid']);
-            underlyingDb.collection('mySessions').count({}, function(error, count) {
-              assert.ifError(error);
-              assert.equal(1, count);
-              server.close();
-              done();
-            });
-          });
+          assert.equal(1, count);
+          server.close();
+          done();
         });
       });
+    });
   });
 
   /**
@@ -150,6 +153,7 @@ describe('MongoDBStore', function() {
     var MongoDBStore = connectMongoDB(express);
 
     var app = express();
+    var numExpectedSources = 2;
     var store = new MongoDBStore(
       {
         uri: 'mongodb://bad.host:27000/connect_mongodb_session_test?connectTimeoutMS=10',
@@ -158,8 +162,13 @@ describe('MongoDBStore', function() {
       function(error) {
         // Should have gotten an error
         assert.ok(error);
-        done();
+        --numExpectedSources || done();
       });
+
+    store.on('error', function(error) {
+      assert.ok(error);
+      --numExpectedSources || done();
+    });
 
     app.use(express.session({
       secret: 'This is a secret',

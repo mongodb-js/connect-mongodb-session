@@ -46,6 +46,7 @@ module.exports = function(connect) {
     var connOptions = options.connectionOptions;
     mongodb.MongoClient.connect(options.uri, connOptions, function(error, db) {
       if (error) {
+        _this._emitter.emit('error', error);
         if (callback) {
           return callback(error);
         }
@@ -58,6 +59,7 @@ module.exports = function(connect) {
         collection(options.collection).
         ensureIndex({ expires: 1 }, { expireAfterSeconds: 0 }, function(error) {
           if (error) {
+            _this._emitter.emit('error', error);
             if (callback) {
               return callback(error);
             }
@@ -90,6 +92,7 @@ module.exports = function(connect) {
     this.db.collection(this.options.collection).
       findOne(this._generateQuery(id), function(error, session) {
         if (error) {
+          _this._emitter.emit('error', error);
           return callback(error);
         } else if (session) {
           if (!session.expires || new Date < session.expires) {
@@ -114,6 +117,9 @@ module.exports = function(connect) {
 
     this.db.collection(this.options.collection).
       remove(this._generateQuery(id), function(error) {
+        if (error) {
+          _this._emitter.emit('error', error);
+        }
         callback && callback(error);
       });
   };
@@ -147,6 +153,9 @@ module.exports = function(connect) {
 
     this.db.collection(this.options.collection).
       update(this._generateQuery(id), s, { upsert: true }, function(error) {
+        if (error) {
+          _this._emitter.emit('error', error);
+        }
         callback && callback(error);
       });
   };
