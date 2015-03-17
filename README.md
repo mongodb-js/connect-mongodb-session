@@ -2,6 +2,8 @@
 
 [MongoDB](http://mongodb.com)-backed session storage for [connect](https://www.npmjs.org/package/connect) and [Express](http://www.expressjs.com). Meant to be a well-maintained and fully-featured replacement for modules like [connect-mongo](https://www.npmjs.org/package/connect-mongo)
 
+[![Build Status](https://travis-ci.org/vkarpov15/connect-mongodb-session.svg?branch=master)](https://travis-ci.org/vkarpov15/connect-mongodb-session)
+
 # API
 
 ## MongoDBStore

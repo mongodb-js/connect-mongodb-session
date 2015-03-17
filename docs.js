@@ -13,6 +13,7 @@ var mdOutput =
   'well-maintained and fully-featured replacement for ' +
   'modules like [connect-mongo]' +
   '(https://www.npmjs.org/package/connect-mongo)\n\n' +
+  '[![Build Status](https://travis-ci.org/vkarpov15/connect-mongodb-session.svg?branch=master)](https://travis-ci.org/vkarpov15/connect-mongodb-session)\n\n' +
   '# API\n\n';
 
 for (var i = 0; i < blocks.length; ++i) {
