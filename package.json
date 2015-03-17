@@ -24,10 +24,11 @@
     "express-session": "1.9.2",
     "istanbul": "0.3.2",
     "mocha": "2.0.1",
-    "request": "2.48.0"
+    "request": "2.48.0",
+    "strawman": "https://github.com/vkarpov15/strawman/archive/master.tar.gz"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha ./test/examples.test.js",
+    "test": "./node_modules/mocha/bin/mocha ./test/*.test.js",
     "test-travis": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/*"
   },
   "engines": "node >= 0.10.0"

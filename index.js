@@ -28,17 +28,12 @@ module.exports = function(connect) {
 
     if (typeof options === 'function') {
       callback = options;
-
       options = {};
-      for (var key in defaults) {
-        options[key] = options[key] || defaults[key];
-      }
     } else {
       options = options || {};
-      for (var key in defaults) {
-        options[key] = options[key] || defaults[key];
-      }
     }
+
+    mergeOptions(options, defaults);
 
     Store.call(this, options);
     this.options = options;
@@ -170,3 +165,9 @@ module.exports = function(connect) {
 
   return MongoDBStore;
 };
+
+function mergeOptions(options, defaults) {
+  for (var key in defaults) {
+    options[key] = options[key] || defaults[key];
+  }
+}
