@@ -1,6 +1,17 @@
 var mongodb = require('mongodb');
 var EventEmitter = require('events').EventEmitter;
 
+/**
+ * Returns a constructor with the specified connect middleware's Store
+ * class as its prototype
+ *
+ * ####Example:
+ *
+ *     connectMongoDBSession(require('express-session'));
+ *
+ * @param {Function} connect connect-compatible session middleware (e.g. Express 3, express-session)
+ * @api public
+ */
 module.exports = function(connect) {
   var Store = connect.Store || connect.session.Store;
   var defaults = {
