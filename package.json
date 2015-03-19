@@ -15,7 +15,7 @@
     "url": "https://github.com/vkarpov15/connect-mongodb-session.git"
   },
   "dependencies": {
-    "mongodb": "2.0.18"
+    "mongodb": "2.0.22"
   },
   "devDependencies": {
     "acquit": "0.0.3",
@@ -25,7 +25,7 @@
     "istanbul": "0.3.2",
     "mocha": "2.0.1",
     "request": "2.48.0",
-    "strawman": "https://github.com/vkarpov15/strawman/archive/master.tar.gz"
+    "strawman": "0.0.1"
   },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha ./test/*.test.js",
