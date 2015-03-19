@@ -111,37 +111,89 @@ describe('connectMongoDBSession', function() {
     });
   });
 
-  it('buffers get() calls', function(done) {
-    var SessionStore = connectMongoDBSession({ Store: StoreStub });
-    var numIndexCalls = 0;
-    var emitter = new ee();
+  describe('get()', function() {
+    it('buffers get() calls', function(done) {
+      var SessionStore = connectMongoDBSession({ Store: StoreStub });
+      var numIndexCalls = 0;
+      var emitter = new ee();
 
-    mongodb.MongoClient.connect = function(uri, options, callback) {
-      emitter.on('success', function() {
-        callback(null, db);
+      mongodb.MongoClient.connect = function(uri, options, callback) {
+        emitter.on('success', function() {
+          callback(null, db);
+        });
+      };
+
+      db.ensureIndex.on('called', function(args) {
+        assert.equal(++numIndexCalls, 1);
+        assert.equal(args.index.expires, 1);
+        args.callback();
       });
-    };
 
-    db.ensureIndex.on('called', function(args) {
-      assert.equal(++numIndexCalls, 1);
-      assert.equal(args.index.expires, 1);
-      args.callback();
+      var session = new SessionStore();
+
+      db.findOne.on('called', function(args) {
+        args.callback(null,
+          { expires: new Date('2040-06-01T00:00:00.000Z'), session: { data: 1 } });
+      });
+      session.get('1234', function(error) {
+        assert.ifError(error);
+        assert.equal(numIndexCalls, 1);
+        done();
+      });
+
+      setImmediate(function() {
+        emitter.emit('success');
+      });
     });
 
-    var session = new SessionStore();
+    it('handles get() errors', function(done) {
+      var SessionStore = connectMongoDBSession({ Store: StoreStub });
+      var numIndexCalls = 0;
+      db.ensureIndex.on('called', function(args) {
+        assert.equal(++numIndexCalls, 1);
+        assert.equal(args.index.expires, 1);
+        args.callback();
+      });
 
-    db.findOne.on('called', function(args) {
-      args.callback(null,
-        { expires: new Date('2040-06-01T00:00:00.000Z'), session: { data: 1 } });
-    });
-    session.get('1234', function(error) {
-      assert.ifError(error);
-      assert.equal(numIndexCalls, 1);
-      done();
+      var session = new SessionStore();
+      db.findOne.on('called', function(args) {
+        args.callback(new Error('fail!'));
+      });
+
+      session.get('1234', function(error) {
+        assert.ok(error);
+        assert.equal(error.message, 'Error finding 1234: fail!');
+        done();
+      });
     });
 
-    setImmediate(function() {
-      emitter.emit('success');
+    it('calls destroy() on stale sessions', function(done) {
+      var SessionStore = connectMongoDBSession({ Store: StoreStub });
+      var numIndexCalls = 0;
+      var numRemoveCalls = 0;
+      db.ensureIndex.on('called', function(args) {
+        assert.equal(++numIndexCalls, 1);
+        assert.equal(args.index.expires, 1);
+        args.callback();
+      });
+
+      var session = new SessionStore();
+      db.findOne.on('called', function(args) {
+        args.callback(null, { expires: new Date('2011-06-01T00:00:00.000Z') });
+      });
+
+      db.remove.on('called', function(args) {
+        ++numRemoveCalls;
+        assert.equal(args.query._id, '1234');
+        args.callback();
+      });
+
+      session.get('1234', function(error, doc) {
+        assert.ifError(error);
+        assert.ok(!doc);
+        assert.equal(numRemoveCalls, 1);
+        done();
+      });
     });
   });
 });

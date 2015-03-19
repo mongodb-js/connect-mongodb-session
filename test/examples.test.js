@@ -10,6 +10,7 @@ var mongodb = require('mongodb');
  */
 describe('MongoDBStore', function() {
   var underlyingDb;
+  var server;
 
   beforeEach(function(done) {
     mongodb.MongoClient.connect(
@@ -23,6 +24,10 @@ describe('MongoDBStore', function() {
           return done(error);
         });
       });
+  });
+
+  afterEach(function() {
+    server.close();
   });
 
   /**
@@ -66,7 +71,7 @@ describe('MongoDBStore', function() {
       res.send('Hello ' + JSON.stringify(req.session));
     });
 
-    var server = app.listen(3000);
+    server = app.listen(3000);
 
     underlyingDb.collection('mySessions').count({}, function(error, count) {
       assert.ifError(error);
@@ -80,8 +85,14 @@ describe('MongoDBStore', function() {
         underlyingDb.collection('mySessions').count({}, function(error, count) {
           assert.ifError(error);
           assert.equal(1, count);
-          server.close();
-          done();
+          var config = {
+            url: 'http://localhost:3000',
+            headers: { 'Cookie': 'connect.sid=' + cookie['connect.sid'] }
+          };
+          request(config, function(error, response, body) {
+            assert.ok(!response.headers['set-cookie']);
+            done();
+          });
         });
       });
     });
@@ -121,7 +132,7 @@ describe('MongoDBStore', function() {
       res.send('Hello ' + JSON.stringify(req.session));
     });
 
-    var server = app.listen(3000);
+    server = app.listen(3000);
 
     underlyingDb.collection('mySessions').count({}, function(error, count) {
       assert.ifError(error);
@@ -132,10 +143,11 @@ describe('MongoDBStore', function() {
         assert.equal(1, response.headers['set-cookie'].length);
         var cookie = require('cookie').parse(response.headers['set-cookie'][0]);
         assert.ok(cookie['connect.sid']);
-        underlyingDb.collection('mySessions').count({}, function(error, count) {
+
+        underlyingDb.collection('mySessions').find({}).toArray(function(error, docs) {
           assert.ifError(error);
-          assert.equal(1, count);
-          server.close();
+          assert.equal(1, docs.length);
+          assert.equal(typeof docs[0]._id, 'string');
           done();
         });
       });
@@ -182,6 +194,6 @@ describe('MongoDBStore', function() {
       res.send('Hello ' + JSON.stringify(req.session));
     });
 
-    var server = app.listen(3000);
+    server = app.listen(3000);
   });
 });

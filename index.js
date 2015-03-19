@@ -25,7 +25,7 @@ module.exports = function(connect) {
   var MongoDBStore = function(options, callback) {
     var _this = this;
     this._emitter = new EventEmitter();
-    var errorHandler = handleError.bind(this);
+    this._errorHandler = handleError.bind(this);
 
     if (typeof options === 'function') {
       callback = options;
@@ -43,7 +43,7 @@ module.exports = function(connect) {
     mongodb.MongoClient.connect(options.uri, connOptions, function(error, db) {
       if (error) {
         var e = new Error('Error connecting to db: ' + error.message);
-        return errorHandler(e, callback);
+        return _this._errorHandler(e, callback);
       }
 
       db.
@@ -51,7 +51,7 @@ module.exports = function(connect) {
         ensureIndex({ expires: 1 }, { expireAfterSeconds: 0 }, function(error) {
           if (error) {
             var e = new Error('Error creating index: ' + error.message);
-            return errorHandler(e, callback);
+            return _this._errorHandler(e, callback);
           }
 
           _this.db = db;
@@ -66,7 +66,7 @@ module.exports = function(connect) {
 
   MongoDBStore.prototype._generateQuery = function(id) {
     var ret = {};
-    ret[this.idField] = id;
+    ret[this.options.idField] = id;
     return ret;
   };
 
@@ -82,8 +82,8 @@ module.exports = function(connect) {
     this.db.collection(this.options.collection).
       findOne(this._generateQuery(id), function(error, session) {
         if (error) {
-          var e = new Error('Error finding ' + id + ':' + error.message);
-          return errorHandler(e, callback);
+          var e = new Error('Error finding ' + id + ': ' + error.message);
+          return _this._errorHandler(e, callback);
         } else if (session) {
           if (!session.expires || new Date < session.expires) {
             return callback(null, session.session);
@@ -108,8 +108,8 @@ module.exports = function(connect) {
     this.db.collection(this.options.collection).
       remove(this._generateQuery(id), function(error) {
         if (error) {
-          var e = new Error('Error destroying ' + id + ':' + error.message);
-          return errorHandler(error, callback);
+          var e = new Error('Error destroying ' + id + ': ' + error.message);
+          return _this._errorHandler(error, callback);
         }
         callback && callback();
       });
@@ -147,7 +147,7 @@ module.exports = function(connect) {
         if (error) {
           var e = new Error('Error setting ' + id + ' to ' +
             require('util').inspect(session) + ':' + error.message);
-          return errorHandler(e, callback);
+          return _this._errorHandler(e, callback);
         }
         callback && callback();
       });
