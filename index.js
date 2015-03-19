@@ -25,6 +25,7 @@ module.exports = function(connect) {
   var MongoDBStore = function(options, callback) {
     var _this = this;
     this._emitter = new EventEmitter();
+    var errorHandler = handleError.bind(this);
 
     if (typeof options === 'function') {
       callback = options;
@@ -41,27 +42,21 @@ module.exports = function(connect) {
     var connOptions = options.connectionOptions;
     mongodb.MongoClient.connect(options.uri, connOptions, function(error, db) {
       if (error) {
-        _this._emitter.emit('error', error);
-        if (callback) {
-          return callback(error);
-        }
-        throw new Error('Error connecting to db: ' + error);
+        var e = new Error('Error connecting to db: ' + error.message);
+        return errorHandler(e, callback);
       }
-
-      _this.db = db;
 
       db.
         collection(options.collection).
         ensureIndex({ expires: 1 }, { expireAfterSeconds: 0 }, function(error) {
           if (error) {
-            _this._emitter.emit('error', error);
-            if (callback) {
-              return callback(error);
-            }
-            throw new Error('Error creating index: ' + error);
+            var e = new Error('Error creating index: ' + error.message);
+            return errorHandler(e, callback);
           }
 
+          _this.db = db;
           _this._emitter.emit('connected');
+
           return callback && callback();
         });
     });
@@ -87,8 +82,8 @@ module.exports = function(connect) {
     this.db.collection(this.options.collection).
       findOne(this._generateQuery(id), function(error, session) {
         if (error) {
-          _this._emitter.emit('error', error);
-          return callback(error);
+          var e = new Error('Error finding ' + id + ':' + error.message);
+          return errorHandler(e, callback);
         } else if (session) {
           if (!session.expires || new Date < session.expires) {
             return callback(null, session.session);
@@ -113,9 +108,10 @@ module.exports = function(connect) {
     this.db.collection(this.options.collection).
       remove(this._generateQuery(id), function(error) {
         if (error) {
-          _this._emitter.emit('error', error);
+          var e = new Error('Error destroying ' + id + ':' + error.message);
+          return errorHandler(error, callback);
         }
-        callback && callback(error);
+        callback && callback();
       });
   };
 
@@ -149,9 +145,11 @@ module.exports = function(connect) {
     this.db.collection(this.options.collection).
       update(this._generateQuery(id), s, { upsert: true }, function(error) {
         if (error) {
-          _this._emitter.emit('error', error);
+          var e = new Error('Error setting ' + id + ' to ' +
+            require('util').inspect(session) + ':' + error.message);
+          return errorHandler(e, callback);
         }
-        callback && callback(error);
+        callback && callback();
       });
   };
 
@@ -165,6 +163,20 @@ module.exports = function(connect) {
 
   return MongoDBStore;
 };
+
+function handleError(error, callback) {
+  if (this._emitter.listeners('error').length) {
+    this._emitter.emit('error', error);
+  }
+
+  if (callback) {
+    callback(error);
+  }
+
+  if (!this._emitter.listeners('error').length && !callback) {
+    throw error;
+  }
+}
 
 function mergeOptions(options, defaults) {
   for (var key in defaults) {
