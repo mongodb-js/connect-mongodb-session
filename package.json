@@ -33,7 +33,8 @@
   },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha ./test/*.test.js",
-    "test-travis": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/unit.test.js"
+    "test-travis": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/*.test.js",
+    "unit-coverage": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/unit.test.js"
   },
   "jscsConfig": {
     "preset": "airbnb",

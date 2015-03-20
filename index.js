@@ -97,9 +97,8 @@ module.exports = function(connect) {
   };
 
   MongoDBStore.prototype.destroy = function(id, callback) {
+    var _this = this;
     if (!this.db) {
-      var _this = this;
-
       return this._emitter.once('connected', function() {
         _this.destroy.call(_this, id, callback);
       });
@@ -109,16 +108,16 @@ module.exports = function(connect) {
       remove(this._generateQuery(id), function(error) {
         if (error) {
           var e = new Error('Error destroying ' + id + ': ' + error.message);
-          return _this._errorHandler(error, callback);
+          return _this._errorHandler(e, callback);
         }
         callback && callback();
       });
   };
 
   MongoDBStore.prototype.set = function(id, session, callback) {
-    if (!this.db) {
-      var _this = this;
+    var _this = this;
 
+    if (!this.db) {
       return this._emitter.once('connected', function() {
         _this.set.call(_this, id, session, callback);
       });
@@ -146,7 +145,7 @@ module.exports = function(connect) {
       update(this._generateQuery(id), s, { upsert: true }, function(error) {
         if (error) {
           var e = new Error('Error setting ' + id + ' to ' +
-            require('util').inspect(session) + ':' + error.message);
+            require('util').inspect(session) + ': ' + error.message);
           return _this._errorHandler(e, callback);
         }
         callback && callback();

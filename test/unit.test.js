@@ -14,7 +14,7 @@ describe('connectMongoDBSession', function() {
       ensureIndex: { argumentNames: ['index', 'options', 'callback'] },
       findOne: { argumentNames: ['query', 'callback'] },
       remove: { argumentNames: ['query', 'callback'] },
-      update: { argumentNames: ['query', 'callback' ] }
+      update: { argumentNames: ['query', 'update', 'options', 'callback' ] }
     });
 
     mongodb.MongoClient.connect = function(uri, options, callback) {
@@ -124,7 +124,7 @@ describe('connectMongoDBSession', function() {
       assert.ok(error);
       --numSources || done();
     });
-    store.on('error', function(error) {
+    store.once('error', function(error) {
       assert.ok(error);
       --numSources || done();
     });
@@ -234,6 +234,180 @@ describe('connectMongoDBSession', function() {
       session.get('1234', function(error, doc) {
         assert.ifError(error);
         assert.ok(!doc);
+        done();
+      });
+    });
+  });
+
+  describe('destroy()', function() {
+    var numIndexCalls;
+
+    beforeEach(function() {
+      numIndexCalls = 0;
+
+      db.ensureIndex.on('called', function(args) {
+        assert.equal(++numIndexCalls, 1);
+        assert.equal(args.index.expires, 1);
+        args.callback();
+      });
+    });
+
+    it('buffers until connected', function(done) {
+      var SessionStore = connectMongoDBSession({ Store: StoreStub });
+      var emitter = new ee();
+
+      mongodb.MongoClient.connect = function(uri, options, callback) {
+        emitter.on('success', function() {
+          callback(null, db);
+        });
+      };
+
+      var session = new SessionStore();
+
+      db.remove.on('called', function(args) {
+        args.callback(null);
+      });
+      session.destroy('1234', function(error) {
+        assert.ifError(error);
+        assert.equal(numIndexCalls, 1);
+        done();
+      });
+
+      setImmediate(function() {
+        emitter.emit('success');
+      });
+    });
+
+    it('reports driver errors', function(done) {
+      var SessionStore = connectMongoDBSession({ Store: StoreStub });
+
+      var session = new SessionStore();
+      db.remove.on('called', function(args) {
+        args.callback(new Error('fail!'));
+      });
+
+      session.destroy('1234', function(error) {
+        assert.ok(error);
+        assert.equal(error.message, 'Error destroying 1234: fail!');
+        done();
+      });
+    });
+  });
+
+  describe('set()', function(done) {
+    var numIndexCalls;
+
+    beforeEach(function() {
+      numIndexCalls = 0;
+
+      db.ensureIndex.on('called', function(args) {
+        assert.equal(++numIndexCalls, 1);
+        assert.equal(args.index.expires, 1);
+        args.callback();
+      });
+    });
+
+    it('buffers until connected', function(done) {
+      var SessionStore = connectMongoDBSession({ Store: StoreStub });
+      var emitter = new ee();
+
+      mongodb.MongoClient.connect = function(uri, options, callback) {
+        emitter.on('success', function() {
+          callback(null, db);
+        });
+      };
+
+      var session = new SessionStore();
+
+      db.update.on('called', function(args) {
+        args.callback(null);
+      });
+      session.set('1234', { test: 1 }, function(error) {
+        assert.ifError(error);
+        assert.equal(numIndexCalls, 1);
+        done();
+      });
+
+      setImmediate(function() {
+        emitter.emit('success');
+      });
+    });
+
+    it('converts expires to a date', function(done) {
+      var SessionStore = connectMongoDBSession({ Store: StoreStub });
+
+      var session = new SessionStore();
+
+      db.update.on('called', function(args) {
+        assert.ok(args.update.expires instanceof Date);
+        assert.equal(args.update.expires.getTime(),
+          new Date('2011-06-01T00:00:00.000Z').getTime());
+        args.callback(null);
+      });
+      var update = {
+        test: 1,
+        cookie: { expires: '2011-06-01T00:00:00.000Z' }
+      };
+      session.set('1234', update, function(error) {
+        assert.ifError(error);
+        assert.equal(db.update.calls.length, 1);
+        done();
+      });
+    });
+
+    it('handles set() errors', function(done) {
+      var SessionStore = connectMongoDBSession({ Store: StoreStub });
+
+      var session = new SessionStore();
+      db.update.on('called', function(args) {
+        args.callback(new Error('fail!'));
+      });
+
+      session.set('1234', {}, function(error) {
+        assert.ok(error);
+        assert.equal(error.message, 'Error setting 1234 to {}: fail!');
+        done();
+      });
+    });
+
+    /** For backwards compatibility with connect-mongo */
+    it('converts cookies to JSON strings', function(done) {
+      var SessionStore = connectMongoDBSession({ Store: StoreStub });
+
+      var session = new SessionStore();
+
+      db.update.on('called', function(args) {
+        assert.equal(args.update.session.cookie, 'put that cookie down!');
+        args.callback(null);
+      });
+      var update = {
+        test: 1,
+        cookie: { toJSON: function() { return 'put that cookie down!'; } }
+      };
+      session.set('1234', update, function(error) {
+        assert.ifError(error);
+        assert.equal(db.update.calls.length, 1);
+        done();
+      });
+    });
+
+    /** For backwards compatibility with connect-mongo */
+    it('unless they do not have a toJSON()', function(done) {
+      var SessionStore = connectMongoDBSession({ Store: StoreStub });
+
+      var session = new SessionStore();
+
+      db.update.on('called', function(args) {
+        assert.deepEqual(args.update.session.cookie, { test: 2 });
+        args.callback(null);
+      });
+      var update = {
+        test: 1,
+        cookie: { test: 2 }
+      };
+      session.set('1234', update, function(error) {
+        assert.ifError(error);
+        assert.equal(db.update.calls.length, 1);
         done();
       });
     });

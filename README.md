@@ -2,7 +2,7 @@
 
 [MongoDB](http://mongodb.com)-backed session storage for [connect](https://www.npmjs.org/package/connect) and [Express](http://www.expressjs.com). Meant to be a well-maintained and fully-featured replacement for modules like [connect-mongo](https://www.npmjs.org/package/connect-mongo)
 
-[![Build Status](https://travis-ci.org/vkarpov15/connect-mongodb-session.svg?branch=master)](https://travis-ci.org/vkarpov15/connect-mongodb-session)
+[![Build Status](https://travis-ci.org/vkarpov15/connect-mongodb-session.svg?branch=master)](https://travis-ci.org/vkarpov15/connect-mongodb-session)[![Coverage Status](https://coveralls.io/repos/vkarpov15/connect-mongodb-session/badge.svg?branch=master)](https://coveralls.io/r/vkarpov15/connect-mongodb-session?branch=master)
 
 # API
 
@@ -55,7 +55,7 @@ module will manage the internal connection state for you.
       res.send('Hello ' + JSON.stringify(req.session));
     });
 
-    var server = app.listen(3000);
+    server = app.listen(3000);
 
     underlyingDb.collection('mySessions').count({}, function(error, count) {
       assert.ifError(error);
@@ -69,8 +69,14 @@ module will manage the internal connection state for you.
         underlyingDb.collection('mySessions').count({}, function(error, count) {
           assert.ifError(error);
           assert.equal(1, count);
-          server.close();
-          done();
+          var config = {
+            url: 'http://localhost:3000',
+            headers: { 'Cookie': 'connect.sid=' + cookie['connect.sid'] }
+          };
+          request(config, function(error, response, body) {
+            assert.ok(!response.headers['set-cookie']);
+            done();
+          });
         });
       });
     });
@@ -113,7 +119,7 @@ throw an exception if it can't connect and no callback is passed.
       res.send('Hello ' + JSON.stringify(req.session));
     });
 
-    var server = app.listen(3000);
+    server = app.listen(3000);
 
     underlyingDb.collection('mySessions').count({}, function(error, count) {
       assert.ifError(error);
@@ -124,10 +130,11 @@ throw an exception if it can't connect and no callback is passed.
         assert.equal(1, response.headers['set-cookie'].length);
         var cookie = require('cookie').parse(response.headers['set-cookie'][0]);
         assert.ok(cookie['connect.sid']);
-        underlyingDb.collection('mySessions').count({}, function(error, count) {
+
+        underlyingDb.collection('mySessions').find({}).toArray(function(error, docs) {
           assert.ifError(error);
-          assert.equal(1, count);
-          server.close();
+          assert.equal(1, docs.length);
+          assert.equal(typeof docs[0]._id, 'string');
           done();
         });
       });
@@ -177,7 +184,7 @@ errors. If you don't pass a callback to the `MongoDBStore` constructor,
       res.send('Hello ' + JSON.stringify(req.session));
     });
 
-    var server = app.listen(3000);
+    server = app.listen(3000);
   
 ```
 

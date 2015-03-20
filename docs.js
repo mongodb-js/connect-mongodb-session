@@ -13,7 +13,8 @@ var mdOutput =
   'well-maintained and fully-featured replacement for ' +
   'modules like [connect-mongo]' +
   '(https://www.npmjs.org/package/connect-mongo)\n\n' +
-  '[![Build Status](https://travis-ci.org/vkarpov15/connect-mongodb-session.svg?branch=master)](https://travis-ci.org/vkarpov15/connect-mongodb-session)\n\n' +
+  '[![Build Status](https://travis-ci.org/vkarpov15/connect-mongodb-session.svg?branch=master)](https://travis-ci.org/vkarpov15/connect-mongodb-session)' +
+  '[![Coverage Status](https://coveralls.io/repos/vkarpov15/connect-mongodb-session/badge.svg?branch=master)](https://coveralls.io/r/vkarpov15/connect-mongodb-session?branch=master)\n\n' +
   '# API\n\n';
 
 for (var i = 0; i < blocks.length; ++i) {
