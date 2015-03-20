@@ -25,6 +25,40 @@ describe('connectMongoDBSession', function() {
     StoreStub.prototype = { connectMongoDB: 1 };
   });
 
+  describe('options', function() {
+    it('can specify uri', function(done) {
+      var SessionStore = connectMongoDBSession({ Store: StoreStub });
+      var session = new SessionStore({ uri: 'mongodb://host:port/db' });
+      assert.equal(session.options.uri, 'mongodb://host:port/db');
+      assert.equal(session.options.idField, '_id');
+      done();
+    });
+
+    it('can specify collection', function(done) {
+      var SessionStore = connectMongoDBSession({ Store: StoreStub });
+      var session = new SessionStore({ collection: 'notSessions' });
+      assert.equal(session.options.uri, 'mongodb://localhost:27017/test');
+      assert.equal(session.options.collection, 'notSessions');
+      done();
+    });
+
+    it('can specify expires', function(done) {
+      var SessionStore = connectMongoDBSession({ Store: StoreStub });
+      var session = new SessionStore({ expires: 25 });
+      assert.equal(session.options.uri, 'mongodb://localhost:27017/test');
+      assert.equal(session.options.expires, 25);
+      done();
+    });
+
+    it('can specify idField', function(done) {
+      var SessionStore = connectMongoDBSession({ Store: StoreStub });
+      var session = new SessionStore({ idField: 'sessionId' });
+      assert.equal(session.options.uri, 'mongodb://localhost:27017/test');
+      assert.deepEqual(session._generateQuery('1234'), { sessionId: '1234' });
+      done();
+    });
+  });
+
   it('can get Store object from Express 3', function(done) {
     var SessionStore = connectMongoDBSession({ session: { Store: StoreStub } });
     assert.ok(SessionStore.prototype.connectMongoDB);
@@ -192,6 +226,27 @@ describe('connectMongoDBSession', function() {
         assert.ifError(error);
         assert.ok(!doc);
         assert.equal(numRemoveCalls, 1);
+        done();
+      });
+    });
+
+    it('returns empty if no session found', function(done) {
+      var SessionStore = connectMongoDBSession({ Store: StoreStub });
+      var numIndexCalls = 0;
+      db.ensureIndex.on('called', function(args) {
+        assert.equal(++numIndexCalls, 1);
+        assert.equal(args.index.expires, 1);
+        args.callback();
+      });
+
+      var session = new SessionStore();
+      db.findOne.on('called', function(args) {
+        args.callback(null, null);
+      });
+
+      session.get('1234', function(error, doc) {
+        assert.ifError(error);
+        assert.ok(!doc);
         done();
       });
     });
