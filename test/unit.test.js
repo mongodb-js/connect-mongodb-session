@@ -146,9 +146,20 @@ describe('connectMongoDBSession', function() {
   });
 
   describe('get()', function() {
+    var numIndexCalls;
+
+    beforeEach(function() {
+      numIndexCalls = 0;
+
+      db.ensureIndex.on('called', function(args) {
+        assert.equal(++numIndexCalls, 1);
+        assert.equal(args.index.expires, 1);
+        args.callback();
+      });
+    });
+
     it('buffers get() calls', function(done) {
       var SessionStore = connectMongoDBSession({ Store: StoreStub });
-      var numIndexCalls = 0;
       var emitter = new ee();
 
       mongodb.MongoClient.connect = function(uri, options, callback) {
@@ -156,12 +167,6 @@ describe('connectMongoDBSession', function() {
           callback(null, db);
         });
       };
-
-      db.ensureIndex.on('called', function(args) {
-        assert.equal(++numIndexCalls, 1);
-        assert.equal(args.index.expires, 1);
-        args.callback();
-      });
 
       var session = new SessionStore();
 
@@ -182,12 +187,6 @@ describe('connectMongoDBSession', function() {
 
     it('handles get() errors', function(done) {
       var SessionStore = connectMongoDBSession({ Store: StoreStub });
-      var numIndexCalls = 0;
-      db.ensureIndex.on('called', function(args) {
-        assert.equal(++numIndexCalls, 1);
-        assert.equal(args.index.expires, 1);
-        args.callback();
-      });
 
       var session = new SessionStore();
       db.findOne.on('called', function(args) {
@@ -203,13 +202,7 @@ describe('connectMongoDBSession', function() {
 
     it('calls destroy() on stale sessions', function(done) {
       var SessionStore = connectMongoDBSession({ Store: StoreStub });
-      var numIndexCalls = 0;
       var numRemoveCalls = 0;
-      db.ensureIndex.on('called', function(args) {
-        assert.equal(++numIndexCalls, 1);
-        assert.equal(args.index.expires, 1);
-        args.callback();
-      });
 
       var session = new SessionStore();
       db.findOne.on('called', function(args) {
@@ -232,12 +225,6 @@ describe('connectMongoDBSession', function() {
 
     it('returns empty if no session found', function(done) {
       var SessionStore = connectMongoDBSession({ Store: StoreStub });
-      var numIndexCalls = 0;
-      db.ensureIndex.on('called', function(args) {
-        assert.equal(++numIndexCalls, 1);
-        assert.equal(args.index.expires, 1);
-        args.callback();
-      });
 
       var session = new SessionStore();
       db.findOne.on('called', function(args) {

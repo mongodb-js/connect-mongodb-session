@@ -118,7 +118,7 @@ module.exports = function(connect) {
   MongoDBStore.prototype.set = function(id, session, callback) {
     if (!this.db) {
       var _this = this;
-      
+
       return this._emitter.once('connected', function() {
         _this.set.call(_this, id, session, callback);
       });
