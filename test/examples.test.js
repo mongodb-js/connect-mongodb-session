@@ -1,5 +1,4 @@
 var assert = require('assert');
-var connectMongoDB = require('../');
 var request = require('request');
 var mongodb = require('mongodb');
 
@@ -43,8 +42,8 @@ describe('MongoDBStore', function() {
    */
   it('can store sessions for Express 4', function(done) {
     var express = require('express');
-
-    var MongoDBStore = connectMongoDB(require('express-session'));
+    var session = require('express-session');
+    var MongoDBStore = require('connect-mongodb-session')(session);
 
     var app = express();
     var store = new MongoDBStore(
@@ -111,7 +110,7 @@ describe('MongoDBStore', function() {
   it('can store sessions for latest Express 3.x', function(done) {
     var express = require('../vendor/express-3.18.1');
 
-    var MongoDBStore = connectMongoDB(express);
+    var MongoDBStore = require('connect-mongodb-session')(express);
 
     var app = express();
     var store = new MongoDBStore(
@@ -162,7 +161,7 @@ describe('MongoDBStore', function() {
   it('throws an error when it can\'t connect to MongoDB', function(done) {
     var express = require('../vendor/express-3.18.1');
 
-    var MongoDBStore = connectMongoDB(express);
+    var MongoDBStore = require('connect-mongodb-session')(express);
 
     var app = express();
     var numExpectedSources = 2;

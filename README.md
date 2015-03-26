@@ -27,8 +27,8 @@ module will manage the internal connection state for you.
 ```javascript
     
     var express = require('express');
-
-    var MongoDBStore = connectMongoDB(require('express-session'));
+    var session = require('express-session');
+    var MongoDBStore = require('connect-mongodb-session')(session);
 
     var app = express();
     var store = new MongoDBStore(
@@ -98,7 +98,7 @@ throw an exception if it can't connect and no callback is passed.
     
     var express = require('../vendor/express-3.18.1');
 
-    var MongoDBStore = connectMongoDB(express);
+    var MongoDBStore = require('connect-mongodb-session')(express);
 
     var app = express();
     var store = new MongoDBStore(
@@ -152,7 +152,7 @@ errors. If you don't pass a callback to the `MongoDBStore` constructor,
     
     var express = require('../vendor/express-3.18.1');
 
-    var MongoDBStore = connectMongoDB(express);
+    var MongoDBStore = require('connect-mongodb-session')(express);
 
     var app = express();
     var numExpectedSources = 2;
