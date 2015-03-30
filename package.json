@@ -12,10 +12,10 @@
   "author": "Valeri Karpov <valeri.karpov@mongodb.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vkarpov15/connect-mongodb-session.git"
+    "url": "https://github.com/mongodb-js/connect-mongodb-session.git"
   },
   "dependencies": {
-    "mongodb": "2.0.22"
+    "mongodb": "2.0.24"
   },
   "devDependencies": {
     "acquit": "0.0.3",
