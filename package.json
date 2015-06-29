@@ -27,7 +27,7 @@
     "gulp-jscs": "1.4.0",
     "istanbul": "0.3.2",
     "jscs": "1.9.0",
-    "mocha": "2.0.1",
+    "mocha": "2.2.5",
     "request": "2.48.0",
     "strawman": "0.0.1"
   },
