@@ -19,6 +19,11 @@ If you pass in an instance of the
 the MongoDBStore class will enable you to store your Express sessions
 in MongoDB.
 
+The MongoDBStore class has 2 required options:
+
+1. `uri`: a [MongoDB connection string](http://docs.mongodb.org/manual/reference/connection-string/)
+2. `collection`: the MongoDB collection to store sessions in
+
 **Note:** You can pass a callback to the `MongoDBStore` constructor,
 but this is entirely optional. The Express 3.x example demonstrates
 that you can use the MongoDBStore class in a synchronous-like style: the
@@ -37,7 +42,7 @@ module will manage the internal connection state for you.
         collection: 'mySessions'
       });
 
-    // Don't emit error
+    // Catch errors
     store.on('error', function(error) {
       assert.ifError(error);
       assert.ok(false);
