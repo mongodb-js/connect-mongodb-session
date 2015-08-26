@@ -1,9 +1,15 @@
 var acquit = require('acquit');
 
+var IGNORE_REGEXP = new RegExp('[\\s]+// acquit:ignore:start[\\s\\S]*?// acquit:ignore:end', 'g');
+
 var content = require('fs').
   readFileSync('./test/examples.test.js').
   toString();
-var blocks = acquit.parse(content);
+var blocks = acquit.parse(content, function(block) {
+  if (block.code) {
+    block.code = block.code.replace(IGNORE_REGEXP, '');
+  }
+});
 
 var mdOutput =
   '# connect-mongodb-session\n\n' +

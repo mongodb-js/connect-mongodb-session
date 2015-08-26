@@ -77,6 +77,7 @@ describe('MongoDBStore', function() {
 
     server = app.listen(3000);
 
+    // acquit:ignore:start
     underlyingDb.collection('mySessions').count({}, function(error, count) {
       assert.ifError(error);
       assert.equal(0, count);
@@ -100,6 +101,7 @@ describe('MongoDBStore', function() {
         });
       });
     });
+    // acquit:ignore:end
   });
 
   /**
@@ -138,6 +140,7 @@ describe('MongoDBStore', function() {
 
     server = app.listen(3000);
 
+    // acquit:ignore:start
     underlyingDb.collection('mySessions').count({}, function(error, count) {
       assert.ifError(error);
       assert.equal(0, count);
@@ -156,6 +159,7 @@ describe('MongoDBStore', function() {
         });
       });
     });
+    // acquit:ignore:end
   });
 
   /**
@@ -177,13 +181,18 @@ describe('MongoDBStore', function() {
       },
       function(error) {
         // Should have gotten an error
+        // acquit:ignore:start
         assert.ok(error);
         --numExpectedSources || done();
+        // acquit:ignore:end
       });
 
     store.on('error', function(error) {
+      // Also get an error here
+      // acquit:ignore:start
       assert.ok(error);
       --numExpectedSources || done();
+      // acquit:ignore:end
     });
 
     app.use(express.session({

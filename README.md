@@ -61,43 +61,12 @@ module will manage the internal connection state for you.
     });
 
     server = app.listen(3000);
-
-    underlyingDb.collection('mySessions').count({}, function(error, count) {
-      assert.ifError(error);
-      assert.equal(0, count);
-
-      request('http://localhost:3000', function(error, response, body) {
-        assert.ifError(error);
-        assert.equal(1, response.headers['set-cookie'].length);
-        var cookie = require('cookie').parse(response.headers['set-cookie'][0]);
-        assert.ok(cookie['connect.sid']);
-        underlyingDb.collection('mySessions').count({}, function(error, count) {
-          assert.ifError(error);
-          assert.equal(1, count);
-          var config = {
-            url: 'http://localhost:3000',
-            headers: { 'Cookie': 'connect.sid=' + cookie['connect.sid'] }
-          };
-          request(config, function(error, response, body) {
-            assert.ok(!response.headers['set-cookie']);
-            done();
-          });
-        });
-      });
-    });
   
 ```
 
 #### It can store sessions for latest Express 3.x
 
-If you're using Express 3.x, you need to pass the Express module itself
-rather than the `express-session` module. Session storage is part of
-the Express core in 3.x but not in 4.x.
-
-**Note:** This example doesn't pass a callback to the `MongoDBStore`
-constructor. This module can queue up requests to execute once the
-database is connected. However, the `MongoDBStore` constructor will
-throw an exception if it can't connect and no callback is passed.
+acquit:ignore:end
 
 ```javascript
     
@@ -125,33 +94,12 @@ throw an exception if it can't connect and no callback is passed.
     });
 
     server = app.listen(3000);
-
-    underlyingDb.collection('mySessions').count({}, function(error, count) {
-      assert.ifError(error);
-      assert.equal(0, count);
-
-      request('http://localhost:3000', function(error, response, body) {
-        assert.ifError(error);
-        assert.equal(1, response.headers['set-cookie'].length);
-        var cookie = require('cookie').parse(response.headers['set-cookie'][0]);
-        assert.ok(cookie['connect.sid']);
-
-        underlyingDb.collection('mySessions').find({}).toArray(function(error, docs) {
-          assert.ifError(error);
-          assert.equal(1, docs.length);
-          assert.equal(typeof docs[0]._id, 'string');
-          done();
-        });
-      });
-    });
   
 ```
 
 #### It throws an error when it can't connect to MongoDB
 
-You should pass a callback to the `MongoDBStore` constructor to catch
-errors. If you don't pass a callback to the `MongoDBStore` constructor,
-`MongoDBStore` will `throw` if it can't connect.
+acquit:ignore:end
 
 ```javascript
     
@@ -168,13 +116,10 @@ errors. If you don't pass a callback to the `MongoDBStore` constructor,
       },
       function(error) {
         // Should have gotten an error
-        assert.ok(error);
-        --numExpectedSources || done();
       });
 
     store.on('error', function(error) {
-      assert.ok(error);
-      --numExpectedSources || done();
+      // Also get an error here
     });
 
     app.use(express.session({
