@@ -33,8 +33,8 @@ for (var i = 0; i < blocks.length; ++i) {
   for (var j = 0; j < describe.blocks.length; ++j) {
     var it = describe.blocks[j];
     mdOutput += '#### It ' + it.contents + '\n\n';
-    mdOutput += it.comments[0] ?
-      acquit.trimEachLine(it.comments[0]).trim() + '\n\n' :
+    mdOutput += it.comments.length ?
+      acquit.trimEachLine(it.comments[it.comments.length - 1]).trim() + '\n\n' :
       '';
     mdOutput += '```javascript\n';
     mdOutput += '    ' + it.code + '\n';
