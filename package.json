@@ -15,7 +15,7 @@
     "url": "https://github.com/mongodb-js/connect-mongodb-session.git"
   },
   "dependencies": {
-    "mongodb": "~2.0.46"
+    "mongodb": "~2.1.0"
   },
   "devDependencies": {
     "acquit": "0.1.0",
