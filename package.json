@@ -31,6 +31,7 @@
     "request": "2.48.0",
     "strawman": "0.0.1"
   },
+  "main": "index.js",
   "scripts": {
     "test": "env NODE_PATH=../ ./node_modules/mocha/bin/mocha ./test/*.test.js",
     "test-travis": "env NODE_PATH=../ ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/*.test.js",
