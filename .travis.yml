@@ -4,6 +4,7 @@ node_js:
   - "0.10"
   - "iojs"
   - "4"
+  - "5"
 services:
   - "mongodb"
 before_script: "bash setup-tests.sh"
