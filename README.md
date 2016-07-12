@@ -98,7 +98,12 @@ throw an exception if it can't connect and no callback is passed.
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
       },
-      store: store
+      store: store,
+      // Boilerplate options, see:
+      // * https://www.npmjs.com/package/express-session#resave
+      // * https://www.npmjs.com/package/express-session#saveuninitialized
+      resave: true,
+      saveUninitialized: true
     }));
 
     app.get('/', function(req, res) {
@@ -141,7 +146,12 @@ errors. If you don't pass a callback to the `MongoDBStore` constructor,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
       },
-      store: store
+      store: store,
+      // Boilerplate options, see:
+      // * https://www.npmjs.com/package/express-session#resave
+      // * https://www.npmjs.com/package/express-session#saveuninitialized
+      resave: true,
+      saveUninitialized: true
     }));
 
     app.get('/', function(req, res) {
