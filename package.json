@@ -1,6 +1,6 @@
 {
   "name": "connect-mongodb-session",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "MongoDB session store for connect/express built by MongoDB",
   "keywords": [
     "connect",
@@ -15,7 +15,7 @@
     "url": "https://github.com/mongodb-js/connect-mongodb-session.git"
   },
   "dependencies": {
-    "mongodb": "~2.1.0"
+    "mongodb": "~2.2.0"
   },
   "devDependencies": {
     "acquit": "0.1.0",
