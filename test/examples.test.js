@@ -101,7 +101,14 @@ describe('MongoDBStore', function() {
           };
           request(config, function(error, response, body) {
             assert.ok(!response.headers['set-cookie']);
-            done();
+            store.clear(function(error) {
+              assert.ifError(error);
+              underlyingDb.collection('mySessions').count({}, function(error, count) {
+                assert.ifError(error);
+                assert.equal(0, count);
+                done();
+              });
+            });
           });
         });
       });
