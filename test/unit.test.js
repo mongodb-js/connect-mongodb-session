@@ -412,4 +412,33 @@ describe('connectMongoDBSession', function() {
       });
     });
   });
+
+  describe('clear()', function(done){
+    var numIndexCalls;
+
+    beforeEach(function() {
+      numIndexCalls = 0;
+
+      db.ensureIndex.on('called', function(args) {
+        assert.equal(++numIndexCalls, 1);
+        assert.equal(args.index.expires, 1);
+        args.callback();
+      });
+    });
+
+    it('clears the session store', function(done) {
+      var SessionStore = connectMongoDBSession({ Store: StoreStub });
+
+      var session = new SessionStore();
+      db.remove.on('called', function(args) {
+        args.callback(null);
+      });
+
+      session.clear(function(error) {
+        assert.ifError(error);
+        done();
+      });
+    });
+  });
+
 });

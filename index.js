@@ -114,6 +114,24 @@ module.exports = function(connect) {
       });
   };
 
+  MongoDBStore.prototype.clear = function(callback) {
+    var _this = this;
+    if (!this.db) {
+      return this._emitter.once('connected', function() {
+        _this.clear.call(_this, callback);
+      });
+    }
+
+    this.db.collection(this.options.collection).
+      remove({}, function(error) {
+        if (error) {
+          var e = new Error('Error clearing all sessions: ' + error.message);
+          return _this._errorHandler(e, callback);
+        }
+        callback && callback();
+      });
+  };
+
   MongoDBStore.prototype.set = function(id, session, callback) {
     var _this = this;
 

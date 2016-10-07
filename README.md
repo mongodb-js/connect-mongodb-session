@@ -69,6 +69,9 @@ module will manage the internal connection state for you.
   
 ```
 
+**Optional:** To clear all sessions from the store, use `store.clear(callback);`. 
+The callback should be called as `callback(error)`.
+
 #### It can store sessions for latest Express 3.x
 
 If you're using Express 3.x, you need to pass the Express module itself
