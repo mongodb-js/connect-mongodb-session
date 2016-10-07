@@ -439,6 +439,20 @@ describe('connectMongoDBSession', function() {
         done();
       });
     });
-  });
 
+    it('handles set() errors', function(done) {
+      var SessionStore = connectMongoDBSession({ Store: StoreStub });
+
+      var session = new SessionStore();
+      db.remove.on('called', function(args) {
+        args.callback(new Error('fail!'));
+      });
+
+      session.clear(function(error) {
+        assert.ok(error);
+        assert.equal(error.message, 'Error clearing all sessions: fail!');
+        done();
+      });
+    });
+  });
 });
