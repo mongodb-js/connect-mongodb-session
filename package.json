@@ -42,5 +42,5 @@
     "requireMultipleVarDecl": null,
     "disallowMultipleVarDecl": true
   },
-  "engines": "node >= 0.10.0"
+  "engines": "node >= 4.0.0"
 }
