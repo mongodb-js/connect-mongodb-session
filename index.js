@@ -34,7 +34,7 @@ module.exports = function(connect) {
       options = options || {};
     }
 
-    mergeOptions(options, defaults);
+    Object.assign(options, defaults);
 
     Store.call(this, options);
     this.options = options;
@@ -192,11 +192,5 @@ function handleError(error, callback) {
 
   if (!this._emitter.listeners('error').length && !callback) {
     throw error;
-  }
-}
-
-function mergeOptions(options, defaults) {
-  for (var key in defaults) {
-    options[key] = options[key] || defaults[key];
   }
 }
