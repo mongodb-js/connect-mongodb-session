@@ -28,7 +28,7 @@
     "istanbul": "0.4.5",
     "jscs": "3.0.7",
     "mocha": "3.1.2",
-    "request": "2.80.0",
+    "request": "2.81.0",
     "strawman": "0.0.1"
   },
   "main": "index.js",
