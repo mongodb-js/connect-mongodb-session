@@ -48,7 +48,7 @@ module.exports = function(connect) {
 
       db.
         collection(options.collection).
-        ensureIndex({ expires: 1 }, { expireAfterSeconds: 0 }, function(error) {
+        createIndex({ expires: 1 }, { expireAfterSeconds: 0 }, function(error) {
           if (error) {
             var e = new Error('Error creating index: ' + error.message);
             return _this._errorHandler(e, callback);

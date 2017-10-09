@@ -11,7 +11,7 @@ describe('connectMongoDBSession', function() {
   beforeEach(function() {
     db = strawman({
       collection: { argumentNames: ['collection'], chain: true },
-      ensureIndex: { argumentNames: ['index', 'options', 'callback'] },
+      createIndex: { argumentNames: ['index', 'options', 'callback'] },
       findOne: { argumentNames: ['query', 'callback'] },
       remove: { argumentNames: ['query', 'callback'] },
       update: { argumentNames: ['query', 'update', 'options', 'callback' ] }
@@ -68,7 +68,7 @@ describe('connectMongoDBSession', function() {
   it('specifying options is optional', function(done) {
     var SessionStore = connectMongoDBSession({ Store: StoreStub });
     var numIndexCalls = 0;
-    db.ensureIndex.on('called', function(args) {
+    db.createIndex.on('called', function(args) {
       assert.equal(++numIndexCalls, 1);
       assert.equal(args.index.expires, 1);
       args.callback();
@@ -84,7 +84,7 @@ describe('connectMongoDBSession', function() {
   it('uses default options and no callback if no args passed', function(done) {
     var SessionStore = connectMongoDBSession({ Store: StoreStub });
     var numIndexCalls = 0;
-    db.ensureIndex.on('called', function(args) {
+    db.createIndex.on('called', function(args) {
       assert.equal(++numIndexCalls, 1);
       assert.equal(args.index.expires, 1);
       args.callback();
@@ -133,7 +133,7 @@ describe('connectMongoDBSession', function() {
   it('handles index errors', function(done) {
     var SessionStore = connectMongoDBSession({ Store: StoreStub });
     var numIndexCalls = 0;
-    db.ensureIndex.on('called', function(args) {
+    db.createIndex.on('called', function(args) {
       assert.equal(++numIndexCalls, 1);
       assert.equal(args.index.expires, 1);
       args.callback(new Error('Index fail'));
@@ -151,7 +151,7 @@ describe('connectMongoDBSession', function() {
     beforeEach(function() {
       numIndexCalls = 0;
 
-      db.ensureIndex.on('called', function(args) {
+      db.createIndex.on('called', function(args) {
         assert.equal(++numIndexCalls, 1);
         assert.equal(args.index.expires, 1);
         args.callback();
@@ -245,7 +245,7 @@ describe('connectMongoDBSession', function() {
     beforeEach(function() {
       numIndexCalls = 0;
 
-      db.ensureIndex.on('called', function(args) {
+      db.createIndex.on('called', function(args) {
         assert.equal(++numIndexCalls, 1);
         assert.equal(args.index.expires, 1);
         args.callback();
@@ -300,7 +300,7 @@ describe('connectMongoDBSession', function() {
     beforeEach(function() {
       numIndexCalls = 0;
 
-      db.ensureIndex.on('called', function(args) {
+      db.createIndex.on('called', function(args) {
         assert.equal(++numIndexCalls, 1);
         assert.equal(args.index.expires, 1);
         args.callback();
@@ -419,7 +419,7 @@ describe('connectMongoDBSession', function() {
     beforeEach(function() {
       numIndexCalls = 0;
 
-      db.ensureIndex.on('called', function(args) {
+      db.createIndex.on('called', function(args) {
         assert.equal(++numIndexCalls, 1);
         assert.equal(args.index.expires, 1);
         args.callback();
