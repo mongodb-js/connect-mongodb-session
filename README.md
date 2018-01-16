@@ -4,15 +4,18 @@
 
 [![Build Status](https://travis-ci.org/mongodb-js/connect-mongodb-session.svg?branch=master)](https://travis-ci.org/mongodb-js/connect-mongodb-session) [![Coverage Status](https://coveralls.io/repos/mongodb-js/connect-mongodb-session/badge.svg?branch=master)](https://coveralls.io/r/mongodb-js/connect-mongodb-session?branch=master)
 
-# API
 
-## MongoDBStore
+
+# MongoDBStore
+
 
 This module exports a single function which takes an instance of connect
 (or Express) and returns a `MongoDBStore` class that can be used to
 store sessions in MongoDB.
 
-#### It can store sessions for Express 4
+
+## It can store sessions for Express 4
+
 
 If you pass in an instance of the
 [`express-session` module](http://npmjs.org/package/express-session)
@@ -29,8 +32,9 @@ but this is entirely optional. The Express 3.x example demonstrates
 that you can use the MongoDBStore class in a synchronous-like style: the
 module will manage the internal connection state for you.
 
+
 ```javascript
-    
+
     var express = require('express');
     var session = require('express-session');
     var MongoDBStore = require('connect-mongodb-session')(session);
@@ -66,13 +70,13 @@ module will manage the internal connection state for you.
     });
 
     server = app.listen(3000);
+
+    console.log('listening on port 3000');
   
 ```
 
-**Optional:** To clear all sessions from the store, use `store.clear(callback);`. 
-The callback should be called as `callback(error)`.
+## It can store sessions for latest Express 3.x
 
-#### It can store sessions for latest Express 3.x
 
 If you're using Express 3.x, you need to pass the Express module itself
 rather than the `express-session` module. Session storage is part of
@@ -83,8 +87,9 @@ constructor. This module can queue up requests to execute once the
 database is connected. However, the `MongoDBStore` constructor will
 throw an exception if it can't connect and no callback is passed.
 
+
 ```javascript
-    
+
     var express = require('../vendor/express-3.18.1');
 
     var MongoDBStore = require('connect-mongodb-session')(express);
@@ -114,17 +119,21 @@ throw an exception if it can't connect and no callback is passed.
     });
 
     server = app.listen(3000);
+
+    console.log('listening on port 3000');
   
 ```
 
-#### It throws an error when it can't connect to MongoDB
+## It throws an error when it can't connect to MongoDB
+
 
 You should pass a callback to the `MongoDBStore` constructor to catch
 errors. If you don't pass a callback to the `MongoDBStore` constructor,
 `MongoDBStore` will `throw` if it can't connect.
 
+
 ```javascript
-    
+
     var express = require('../vendor/express-3.18.1');
 
     var MongoDBStore = require('connect-mongodb-session')(express);
@@ -164,4 +173,3 @@ errors. If you don't pass a callback to the `MongoDBStore` constructor,
     server = app.listen(3000);
   
 ```
-

@@ -18,7 +18,9 @@
     "mongodb": "~2.2.0"
   },
   "devDependencies": {
-    "acquit": "0.4.1",
+    "acquit": "0.5.1",
+    "acquit-ignore": "0.0.3",
+    "acquit-markdown": "0.0.8",
     "cookie": "0.3.1",
     "express": "4.14.0",
     "express-session": "1.15.2",
@@ -33,6 +35,7 @@
   },
   "main": "index.js",
   "scripts": {
+    "docs": "acquit-markdown -r acquit-ignore -p './test/examples.test.js' -h './HEADER.md' > README.md",
     "test": "env NODE_PATH=../ ./node_modules/mocha/bin/mocha ./test/*.test.js",
     "test-travis": "env NODE_PATH=../ ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/*.test.js",
     "unit-coverage": "env NODE_PATH=../ ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/unit.test.js"

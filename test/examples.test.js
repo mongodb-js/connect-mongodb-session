@@ -114,6 +114,8 @@ describe('MongoDBStore', function() {
       });
     });
     // acquit:ignore:end
+
+    console.log('listening on port 3000');
   });
 
   /**
@@ -177,6 +179,8 @@ describe('MongoDBStore', function() {
       });
     });
     // acquit:ignore:end
+
+    console.log('listening on port 3000');
   });
 
   /**
