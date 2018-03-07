@@ -5,6 +5,7 @@ var mongodb = require('mongodb');
 var strawman = require('strawman');
 
 describe('connectMongoDBSession', function() {
+  var client = {"db": {}};
   var db;
   var StoreStub;
 
@@ -17,8 +18,10 @@ describe('connectMongoDBSession', function() {
       update: { argumentNames: ['query', 'update', 'options', 'callback' ] }
     });
 
+    client.db = function(n) {return db;};
+
     mongodb.MongoClient.connect = function(uri, options, callback) {
-      process.nextTick(function() { callback(null, db); });
+      process.nextTick(function() { callback(null, client); });
     };
 
     StoreStub = function() {};
@@ -164,7 +167,7 @@ describe('connectMongoDBSession', function() {
 
       mongodb.MongoClient.connect = function(uri, options, callback) {
         emitter.on('success', function() {
-          callback(null, db);
+          callback(null, client);
         });
       };
 
@@ -258,7 +261,7 @@ describe('connectMongoDBSession', function() {
 
       mongodb.MongoClient.connect = function(uri, options, callback) {
         emitter.on('success', function() {
-          callback(null, db);
+          callback(null, client);
         });
       };
 
@@ -313,7 +316,7 @@ describe('connectMongoDBSession', function() {
 
       mongodb.MongoClient.connect = function(uri, options, callback) {
         emitter.on('success', function() {
-          callback(null, db);
+          callback(null, client);
         });
       };
 

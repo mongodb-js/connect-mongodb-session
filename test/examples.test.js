@@ -14,12 +14,12 @@ describe('MongoDBStore', function() {
   beforeEach(function(done) {
     mongodb.MongoClient.connect(
       'mongodb://localhost:27017/connect_mongodb_session_test',
-      function(error, db) {
+      function(error, client) {
         if (error) {
           return done(error);
         }
-        underlyingDb = db;
-        db.collection('mySessions').remove({}, function(error) {
+        underlyingDb = client.db('connect_mongodb_session_test');
+        client.db('connect_mongodb_session_test').collection('mySessions').remove({}, function(error) {
           return done(error);
         });
       });
@@ -54,6 +54,7 @@ describe('MongoDBStore', function() {
     var store = new MongoDBStore(
       {
         uri: 'mongodb://localhost:27017/connect_mongodb_session_test',
+        databaseName: 'connect_mongodb_session_test',
         collection: 'mySessions'
       });
 
@@ -137,6 +138,7 @@ describe('MongoDBStore', function() {
     var store = new MongoDBStore(
       {
         uri: 'mongodb://localhost:27017/connect_mongodb_session_test',
+        databaseName: 'connect_mongodb_session_test',
         collection: 'mySessions'
       });
 
@@ -198,6 +200,7 @@ describe('MongoDBStore', function() {
     var store = new MongoDBStore(
       {
         uri: 'mongodb://bad.host:27000/connect_mongodb_session_test?connectTimeoutMS=10',
+        databaseName: 'connect_mongodb_session_test',
         collection: 'mySessions'
       },
       function(error) {
