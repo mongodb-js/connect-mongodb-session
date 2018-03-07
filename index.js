@@ -16,6 +16,7 @@ module.exports = function(connect) {
   var Store = connect.Store || connect.session.Store;
   var defaults = {
     uri: 'mongodb://localhost:27017/test',
+    databaseName: 'test',
     collection: 'sessions',
     connectionOptions: {},
     expires: 1000 * 60 * 60 * 24 * 14, // 2 weeks
@@ -40,11 +41,14 @@ module.exports = function(connect) {
     this.options = options;
 
     var connOptions = options.connectionOptions;
-    mongodb.MongoClient.connect(options.uri, connOptions, function(error, db) {
+    mongodb.MongoClient.connect(options.uri, connOptions, function(error, client) {
       if (error) {
         var e = new Error('Error connecting to db: ' + error.message);
         return _this._errorHandler(e, callback);
       }
+
+      var db = client.db(options.databaseName);
+      this.db = db;
 
       db.
         collection(options.collection).
