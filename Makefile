@@ -1,2 +1,0 @@
-docs:
-	node ./docs.js
