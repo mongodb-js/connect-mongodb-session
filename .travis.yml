@@ -8,6 +8,5 @@ node_js:
   - "9"
 services:
   - "mongodb"
-before_script: "bash setup-tests.sh"
 script: "npm run-script test-travis"
 after_script: "npm install coveralls@2.10.0 && cat ./coverage/lcov.info | coveralls"
