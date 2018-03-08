@@ -22,10 +22,11 @@ If you pass in an instance of the
 the MongoDBStore class will enable you to store your Express sessions
 in MongoDB.
 
-The MongoDBStore class has 2 required options:
+The MongoDBStore class has 3 required options:
 
 1. `uri`: a [MongoDB connection string](http://docs.mongodb.org/manual/reference/connection-string/)
-2. `collection`: the MongoDB collection to store sessions in
+2. `databaseName`: the MongoDB database to store sessions in
+3. `collection`: the MongoDB collection to store sessions in
 
 **Note:** You can pass a callback to the `MongoDBStore` constructor,
 but this is entirely optional. The Express 3.x example demonstrates
@@ -43,6 +44,7 @@ module will manage the internal connection state for you.
     var store = new MongoDBStore(
       {
         uri: 'mongodb://localhost:27017/connect_mongodb_session_test',
+        databaseName: 'connect_mongodb_session_test',
         collection: 'mySessions'
       });
 
@@ -75,55 +77,6 @@ module will manage the internal connection state for you.
   
 ```
 
-## It can store sessions for latest Express 3.x
-
-
-If you're using Express 3.x, you need to pass the Express module itself
-rather than the `express-session` module. Session storage is part of
-the Express core in 3.x but not in 4.x.
-
-**Note:** This example doesn't pass a callback to the `MongoDBStore`
-constructor. This module can queue up requests to execute once the
-database is connected. However, the `MongoDBStore` constructor will
-throw an exception if it can't connect and no callback is passed.
-
-
-```javascript
-
-    var express = require('../vendor/express-3.18.1');
-
-    var MongoDBStore = require('connect-mongodb-session')(express);
-
-    var app = express();
-    var store = new MongoDBStore(
-      {
-        uri: 'mongodb://localhost:27017/connect_mongodb_session_test',
-        collection: 'mySessions'
-      });
-
-    app.use(express.session({
-      secret: 'This is a secret',
-      cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
-      },
-      store: store,
-      // Boilerplate options, see:
-      // * https://www.npmjs.com/package/express-session#resave
-      // * https://www.npmjs.com/package/express-session#saveuninitialized
-      resave: true,
-      saveUninitialized: true
-    }));
-
-    app.get('/', function(req, res) {
-      res.send('Hello ' + JSON.stringify(req.session));
-    });
-
-    server = app.listen(3000);
-
-    console.log('listening on port 3000');
-  
-```
-
 ## It throws an error when it can't connect to MongoDB
 
 
@@ -134,15 +87,16 @@ errors. If you don't pass a callback to the `MongoDBStore` constructor,
 
 ```javascript
 
-    var express = require('../vendor/express-3.18.1');
-
-    var MongoDBStore = require('connect-mongodb-session')(express);
+    var express = require('express');
+    var session = require('express-session');
+    var MongoDBStore = require('connect-mongodb-session')(session);
 
     var app = express();
     var numExpectedSources = 2;
     var store = new MongoDBStore(
       {
         uri: 'mongodb://bad.host:27000/connect_mongodb_session_test?connectTimeoutMS=10',
+        databaseName: 'connect_mongodb_session_test',
         collection: 'mySessions'
       },
       function(error) {
@@ -153,7 +107,7 @@ errors. If you don't pass a callback to the `MongoDBStore` constructor,
       // Also get an error here
     });
 
-    app.use(express.session({
+    app.use(session({
       secret: 'This is a secret',
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
