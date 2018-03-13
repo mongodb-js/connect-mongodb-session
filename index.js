@@ -1,5 +1,6 @@
-var mongodb = require('mongodb');
 var EventEmitter = require('events').EventEmitter;
+var mongodb = require('mongodb');
+var url = require('url');
 
 /**
  * Returns a constructor with the specified connect middleware's Store
@@ -16,7 +17,6 @@ module.exports = function(connect) {
   var Store = connect.Store || connect.session.Store;
   var defaults = {
     uri: 'mongodb://localhost:27017/test',
-    databaseName: 'test',
     collection: 'sessions',
     connectionOptions: {},
     expires: 1000 * 60 * 60 * 24 * 14, // 2 weeks
@@ -36,6 +36,15 @@ module.exports = function(connect) {
     }
 
     mergeOptions(options, defaults);
+    if (options.databaseName == null) {
+      // For backwards compat, pull database from URI by default
+      var parsed = url.parse(options.uri);
+      if (parsed.path != null && parsed.path.length > 1) {
+        options.databaseName = parsed.path.substr(1);
+      } else {
+        options.databaseName = 'test';
+      }
+    }
 
     Store.call(this, options);
     this.options = options;

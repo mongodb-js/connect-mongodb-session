@@ -55,7 +55,6 @@ describe('MongoDBStore', function() {
     var store = new MongoDBStore(
       {
         uri: 'mongodb://localhost:27017/connect_mongodb_session_test',
-        databaseName: 'connect_mongodb_session_test',
         collection: 'mySessions'
       });
 
@@ -116,8 +115,6 @@ describe('MongoDBStore', function() {
       });
     });
     // acquit:ignore:end
-
-    console.log('listening on port 3000');
   });
 
   /**
