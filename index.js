@@ -1,6 +1,5 @@
 var EventEmitter = require('events').EventEmitter;
 var mongodb = require('mongodb');
-var url = require('url');
 
 /**
  * Returns a constructor with the specified connect middleware's Store
@@ -36,15 +35,6 @@ module.exports = function(connect) {
     }
 
     mergeOptions(options, defaults);
-    if (options.databaseName == null) {
-      // For backwards compat, pull database from URI by default
-      var parsed = url.parse(options.uri);
-      if (parsed.path != null && parsed.path.length > 1) {
-        options.databaseName = parsed.path.substr(1);
-      } else {
-        options.databaseName = 'test';
-      }
-    }
 
     Store.call(this, options);
     this.options = options;
@@ -56,7 +46,9 @@ module.exports = function(connect) {
         return _this._errorHandler(e, callback);
       }
 
-      var db = client.db(options.databaseName);
+      var db = options.databaseName == null ?
+        client.db() :
+        client.db(options.databaseName);
       this.db = db;
 
       db.
