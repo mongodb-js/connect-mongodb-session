@@ -26,6 +26,8 @@ module.exports = function(connect) {
     var _this = this;
     this._emitter = new EventEmitter();
     this._errorHandler = handleError.bind(this);
+    this.client = null;
+    this.db = null;
 
     if (typeof options === 'function') {
       callback = options;
@@ -49,7 +51,8 @@ module.exports = function(connect) {
       var db = options.databaseName == null ?
         client.db() :
         client.db(options.databaseName);
-      this.db = db;
+      _this.client = client;
+      _this.db = db;
 
       db.
         collection(options.collection).
@@ -59,7 +62,6 @@ module.exports = function(connect) {
             return _this._errorHandler(e, callback);
           }
 
-          _this.db = db;
           _this._emitter.emit('connected');
 
           return callback && callback();

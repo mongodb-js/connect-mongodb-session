@@ -52,11 +52,18 @@ describe('MongoDBStore', function() {
     var MongoDBStore = require('connect-mongodb-session')(session);
 
     var app = express();
-    var store = new MongoDBStore(
-      {
-        uri: 'mongodb://localhost:27017/connect_mongodb_session_test',
-        collection: 'mySessions'
-      });
+    var store = new MongoDBStore({
+      uri: 'mongodb://localhost:27017/connect_mongodb_session_test',
+      collection: 'mySessions'
+    });
+
+    store.on('connected', function() {
+      store.client; // The underlying MongoClient object from the MongoDB driver
+      // acquit:ignore:start
+      assert.ok(store.client);
+      assert.ok(store.db);
+      // acquit:ignore:end
+    });
 
     // Catch errors
     store.on('error', function(error) {
