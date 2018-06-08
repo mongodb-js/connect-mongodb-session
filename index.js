@@ -117,6 +117,7 @@ module.exports = function(connect) {
           var e = new Error('Error destroying ' + id + ': ' + error.message);
           return _this._errorHandler(e, callback);
         }
+        _this._emitter.emit('expired');
         callback && callback();
       });
   };
