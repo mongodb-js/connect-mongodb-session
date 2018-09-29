@@ -112,7 +112,7 @@ describe('connectMongoDBSession', function() {
       function() {
         new SessionStore();
       },
-      'Error connecting to db: Cant connect');
+      /^Error connecting to db: Cant connect$/);
     done();
   });
 
