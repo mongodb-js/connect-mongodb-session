@@ -18,9 +18,9 @@
     "mongodb": "~3.0.4"
   },
   "devDependencies": {
-    "acquit": "0.6.3",
-    "acquit-ignore": "0.0.5",
-    "acquit-markdown": "0.0.8",
+    "acquit": "1.0.0",
+    "acquit-ignore": "0.1.0",
+    "acquit-markdown": "0.1.0",
     "cookie": "0.3.1",
     "express": "4.14.0",
     "express-session": "1.15.2",
