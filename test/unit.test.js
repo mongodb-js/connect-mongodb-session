@@ -108,11 +108,15 @@ describe('connectMongoDBSession', function() {
     };
 
     var SessionStore = connectMongoDBSession({ Store: StoreStub });
-    assert.throws(
-      function() {
-        new SessionStore();
-      },
-      /^Error connecting to db: Cant connect$/);
+
+    var threw = false;
+    try {
+      new SessionStore();
+    } catch (error) {
+      threw = true;
+      assert.equal(error.message, 'Error connecting to db: Cant connect');
+    }
+
     done();
   });
 
