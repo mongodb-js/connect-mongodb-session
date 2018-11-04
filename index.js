@@ -17,7 +17,7 @@ module.exports = function(connect) {
   var defaults = {
     uri: 'mongodb://localhost:27017/test',
     collection: 'sessions',
-    connectionOptions: {},
+    connectionOptions: {useNewUrlParser: true},
     expires: 1000 * 60 * 60 * 24 * 14, // 2 weeks
     idField: '_id'
   };
