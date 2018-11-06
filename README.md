@@ -45,10 +45,6 @@ var store = new MongoDBStore({
   collection: 'mySessions'
 });
 
-store.on('connected', function() {
-  store.client; // The underlying MongoClient object from the MongoDB driver
-});
-
 // Catch errors
 store.on('error', function(error) {
   assert.ifError(error);

@@ -56,14 +56,14 @@ describe('MongoDBStore', function() {
       uri: 'mongodb://localhost:27017/connect_mongodb_session_test',
       collection: 'mySessions'
     });
+    // acquit:ignore:start
 
     store.on('connected', function() {
       store.client; // The underlying MongoClient object from the MongoDB driver
-      // acquit:ignore:start
       assert.ok(store.client);
       assert.ok(store.db);
-      // acquit:ignore:end
     });
+    // acquit:ignore:end
 
     // Catch errors
     store.on('error', function(error) {
