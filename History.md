@@ -1,3 +1,7 @@
+2.0.4 / 2018-11-12
+==================
+ * fix: upgrade mongodb driver -> 3.1.8 and set `useNewUrlParser` by default #55 [ddtraceweb](https://github.com/ddtraceweb)
+
 2.0.3 / 2018-06-06
 ==================
  * fix: expose store.client property so you can disconnect properly #52
