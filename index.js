@@ -167,7 +167,7 @@ module.exports = function(connect) {
     }
 
     this.db.collection(this.options.collection).
-      update(this._generateQuery(id), s, { upsert: true }, function(error) {
+      updateOne(this._generateQuery(id), { $set: s }, { upsert: true }, function(error) {
         if (error) {
           var e = new Error('Error setting ' + id + ' to ' +
             require('util').inspect(session) + ': ' + error.message);

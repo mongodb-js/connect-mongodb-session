@@ -15,7 +15,7 @@ describe('connectMongoDBSession', function() {
       createIndex: { argumentNames: ['index', 'options', 'callback'] },
       findOne: { argumentNames: ['query', 'callback'] },
       remove: { argumentNames: ['query', 'callback'] },
-      update: { argumentNames: ['query', 'update', 'options', 'callback' ] }
+      updateOne: { argumentNames: ['query', 'update', 'options', 'callback' ] }
     });
 
     client.db = function(n) {return db;};
@@ -326,7 +326,7 @@ describe('connectMongoDBSession', function() {
 
       var session = new SessionStore();
 
-      db.update.on('called', function(args) {
+      db.updateOne.on('called', function(args) {
         args.callback(null);
       });
       session.set('1234', { test: 1 }, function(error) {
@@ -345,9 +345,9 @@ describe('connectMongoDBSession', function() {
 
       var session = new SessionStore();
 
-      db.update.on('called', function(args) {
-        assert.ok(args.update.expires instanceof Date);
-        assert.equal(args.update.expires.getTime(),
+      db.updateOne.on('called', function(args) {
+        assert.ok(args.update.$set.expires instanceof Date);
+        assert.equal(args.update.$set.expires.getTime(),
           new Date('2011-06-01T00:00:00.000Z').getTime());
         args.callback(null);
       });
@@ -357,7 +357,7 @@ describe('connectMongoDBSession', function() {
       };
       session.set('1234', update, function(error) {
         assert.ifError(error);
-        assert.equal(db.update.calls.length, 1);
+        assert.equal(db.updateOne.calls.length, 1);
         done();
       });
     });
@@ -366,7 +366,7 @@ describe('connectMongoDBSession', function() {
       var SessionStore = connectMongoDBSession({ Store: StoreStub });
 
       var session = new SessionStore();
-      db.update.on('called', function(args) {
+      db.updateOne.on('called', function(args) {
         args.callback(new Error('fail!'));
       });
 
@@ -383,8 +383,8 @@ describe('connectMongoDBSession', function() {
 
       var session = new SessionStore();
 
-      db.update.on('called', function(args) {
-        assert.equal(args.update.session.cookie, 'put that cookie down!');
+      db.updateOne.on('called', function(args) {
+        assert.equal(args.update.$set.session.cookie, 'put that cookie down!');
         args.callback(null);
       });
       var update = {
@@ -393,7 +393,7 @@ describe('connectMongoDBSession', function() {
       };
       session.set('1234', update, function(error) {
         assert.ifError(error);
-        assert.equal(db.update.calls.length, 1);
+        assert.equal(db.updateOne.calls.length, 1);
         done();
       });
     });
@@ -404,8 +404,8 @@ describe('connectMongoDBSession', function() {
 
       var session = new SessionStore();
 
-      db.update.on('called', function(args) {
-        assert.deepEqual(args.update.session.cookie, { test: 2 });
+      db.updateOne.on('called', function(args) {
+        assert.deepEqual(args.update.$set.session.cookie, { test: 2 });
         args.callback(null);
       });
       var update = {
@@ -414,7 +414,7 @@ describe('connectMongoDBSession', function() {
       };
       session.set('1234', update, function(error) {
         assert.ifError(error);
-        assert.equal(db.update.calls.length, 1);
+        assert.equal(db.updateOne.calls.length, 1);
         done();
       });
     });
