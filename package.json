@@ -1,6 +1,6 @@
 {
   "name": "connect-mongodb-session",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "MongoDB session store for connect/express built by MongoDB",
   "keywords": [
     "connect",

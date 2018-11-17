@@ -1,3 +1,7 @@
+2.0.5 / 2018-11-17
+==================
+ * fix: use `updateOne()` instead of deprecated `update()` #58 #57 [johannordin](https://github.com/johannordin)
+
 2.0.4 / 2018-11-12
 ==================
  * fix: upgrade mongodb driver -> 3.1.8 and set `useNewUrlParser` by default #55 [ddtraceweb](https://github.com/ddtraceweb)
