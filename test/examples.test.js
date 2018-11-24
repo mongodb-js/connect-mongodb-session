@@ -19,7 +19,7 @@ describe('MongoDBStore', function() {
           return done(error);
         }
         underlyingDb = client.db('connect_mongodb_session_test');
-        client.db('connect_mongodb_session_test').collection('mySessions').remove({}, function(error) {
+        client.db('connect_mongodb_session_test').collection('mySessions').deleteMany({}, function(error) {
           return done(error);
         });
       });
