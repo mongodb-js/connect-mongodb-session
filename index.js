@@ -112,7 +112,7 @@ module.exports = function(connect) {
     }
 
     this.db.collection(this.options.collection).
-      remove(this._generateQuery(id), function(error) {
+      deleteOne(this._generateQuery(id), function(error) {
         if (error) {
           var e = new Error('Error destroying ' + id + ': ' + error.message);
           return _this._errorHandler(e, callback);
@@ -130,7 +130,7 @@ module.exports = function(connect) {
     }
 
     this.db.collection(this.options.collection).
-      remove({}, function(error) {
+      deleteMany({}, function(error) {
         if (error) {
           var e = new Error('Error clearing all sessions: ' + error.message);
           return _this._errorHandler(e, callback);

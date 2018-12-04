@@ -14,7 +14,8 @@ describe('connectMongoDBSession', function() {
       collection: { argumentNames: ['collection'], chain: true },
       createIndex: { argumentNames: ['index', 'options', 'callback'] },
       findOne: { argumentNames: ['query', 'callback'] },
-      remove: { argumentNames: ['query', 'callback'] },
+      deleteOne: { argumentNames: ['query', 'callback'] },
+      deleteMany: { argumentNames: ['query', 'callback'] },
       updateOne: { argumentNames: ['query', 'update', 'options', 'callback' ] }
     });
 
@@ -216,7 +217,7 @@ describe('connectMongoDBSession', function() {
         args.callback(null, { expires: new Date('2011-06-01T00:00:00.000Z') });
       });
 
-      db.remove.on('called', function(args) {
+      db.deleteOne.on('called', function(args) {
         ++numRemoveCalls;
         assert.equal(args.query._id, '1234');
         args.callback();
@@ -271,7 +272,7 @@ describe('connectMongoDBSession', function() {
 
       var session = new SessionStore();
 
-      db.remove.on('called', function(args) {
+      db.deleteOne.on('called', function(args) {
         args.callback(null);
       });
       session.destroy('1234', function(error) {
@@ -289,7 +290,7 @@ describe('connectMongoDBSession', function() {
       var SessionStore = connectMongoDBSession({ Store: StoreStub });
 
       var session = new SessionStore();
-      db.remove.on('called', function(args) {
+      db.deleteOne.on('called', function(args) {
         args.callback(new Error('fail!'));
       });
 
@@ -437,7 +438,7 @@ describe('connectMongoDBSession', function() {
       var SessionStore = connectMongoDBSession({ Store: StoreStub });
 
       var session = new SessionStore();
-      db.remove.on('called', function(args) {
+      db.deleteMany.on('called', function(args) {
         args.callback(null);
       });
 
@@ -451,7 +452,7 @@ describe('connectMongoDBSession', function() {
       var SessionStore = connectMongoDBSession({ Store: StoreStub });
 
       var session = new SessionStore();
-      db.remove.on('called', function(args) {
+      db.deleteMany.on('called', function(args) {
         args.callback(new Error('fail!'));
       });
 
