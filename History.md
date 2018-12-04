@@ -1,3 +1,7 @@
+2.0.6 / 2018-12-04
+==================
+ * fix: use `deleteOne()` and `deleteMany()` instead of deprecated `remove()` #60 #59 [ramicohen303](https://github.com/ramicohen303)
+
 2.0.5 / 2018-11-17
 ==================
  * fix: use `updateOne()` instead of deprecated `update()` #58 #57 [johannordin](https://github.com/johannordin)
