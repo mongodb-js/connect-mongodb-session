@@ -47,7 +47,7 @@ var store = new MongoDBStore({
 
 // Catch errors
 store.on('error', function(error) {
-  console.log(`store error: ${error}`);
+  console.error(`store error: ${error}`);
 });
 
 app.use(require('express-session')({
