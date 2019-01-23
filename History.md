@@ -1,3 +1,7 @@
+2.0.7 / 2019-01-23
+==================
+ * docs: replace assert with console.log() to make example copy/pastable #63 [Roeefl](https://github.com/Roeefl)
+
 2.0.6 / 2018-12-04
 ==================
  * fix: use `deleteOne()` and `deleteMany()` instead of deprecated `remove()` #60 #59 [ramicohen303](https://github.com/ramicohen303)
