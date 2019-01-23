@@ -67,7 +67,11 @@ describe('MongoDBStore', function() {
 
     // Catch errors
     store.on('error', function(error) {
-      console.log(error),
+      console.log(error);
+      // acquit:ignore:start
+      assert.ifError(error);
+	    assert.ok(false);
+      // acquit:ignore:end
     });
 
     app.use(require('express-session')({
