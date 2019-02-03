@@ -1,3 +1,7 @@
+2.0.8 / 2019-02-03
+==================
+ * fix: use archetype to cast options
+
 2.0.7 / 2019-01-23
 ==================
  * docs: replace assert with console.log() to make example copy/pastable #63 [Roeefl](https://github.com/Roeefl)
