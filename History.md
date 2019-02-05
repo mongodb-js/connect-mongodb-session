@@ -1,3 +1,7 @@
+2.1.0 / 2019-02-05
+==================
+ * feat: add store.all #65 [itsinprog](https://github.com/itsinprog)
+
 2.0.8 / 2019-02-03
 ==================
  * fix: use archetype to cast options
