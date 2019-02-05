@@ -126,6 +126,32 @@ module.exports = function(connect) {
       });
   };
 
+  // new store.all() for all sessions
+
+  MongoDBStore.prototype.all = function(callback) {
+    const _this = this;
+
+    if (!this.db) {
+      return this._emitter.once('connected', function() {
+        _this.all.call(_this, callback);
+      });
+    }
+
+    this.db.collection(this.options.collection).
+      find({}).toArray(function(error, sessions) {
+        if (error) {
+          const e = new Error('Error gathering sessions');
+          return _this._errorHandler(e, callback);
+        } else if (sessions) {
+          if (sessions) {
+            return callback(null, sessions);
+          } 
+        } else {
+          return callback();
+        }
+      });
+  };
+
   MongoDBStore.prototype.destroy = function(id, callback) {
     const _this = this;
     if (!this.db) {
