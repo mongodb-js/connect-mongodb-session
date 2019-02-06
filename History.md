@@ -1,3 +1,7 @@
+2.1.1 / 2019-02-06
+==================
+ * fix: add back mistakenly removed databaseName parameter #66 #64 [ramicohen303](https://github.com/ramicohen303)
+
 2.1.0 / 2019-02-05
 ==================
  * feat: add store.all #65 [itsinprog](https://github.com/itsinprog)
