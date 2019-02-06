@@ -61,6 +61,13 @@ describe('connectMongoDBSession', function() {
       assert.deepEqual(session._generateQuery('1234'), { sessionId: '1234' });
       done();
     });
+
+    it('can specify databaseName', function(done) {
+      var SessionStore = connectMongoDBSession({ Store: StoreStub });
+      var session = new SessionStore({ databaseName: 'other_db' });
+      assert.equal(session.options.databaseName, 'other_db');
+      done();
+    });
   });
 
   it('can get Store object from Express 3', function(done) {
