@@ -28,6 +28,11 @@ const OptionsType = new Archetype({
     $type: 'string',
     $required: true,
     $default: '_id'
+  },
+  databaseName: {
+    $type: 'string',
+    $required: false,
+    $default: null
   }
 }).compile('OptionsType');
 
