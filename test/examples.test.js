@@ -1,5 +1,5 @@
 var assert = require('assert');
-var request = require('request');
+var superagent = require('superagent');
 var mongodb = require('mongodb');
 
 /**
@@ -94,27 +94,27 @@ describe('MongoDBStore', function() {
     server = app.listen(3000);
 
     // acquit:ignore:start
-    underlyingDb.collection('mySessions').count({}, function(error, count) {
+    underlyingDb.collection('mySessions').countDocuments({}, function(error, count) {
       assert.ifError(error);
       assert.equal(0, count);
 
-      request('http://localhost:3000', function(error, response, body) {
+      superagent.get('http://localhost:3000', function(error, response) {
         assert.ifError(error);
         assert.equal(1, response.headers['set-cookie'].length);
         var cookie = require('cookie').parse(response.headers['set-cookie'][0]);
         assert.ok(cookie['connect.sid']);
-        underlyingDb.collection('mySessions').count({}, function(error, count) {
+        underlyingDb.collection('mySessions').countDocuments({}, function(error, count) {
           assert.ifError(error);
           assert.equal(1, count);
           var config = {
             url: 'http://localhost:3000',
             headers: { 'Cookie': 'connect.sid=' + cookie['connect.sid'] }
           };
-          request(config, function(error, response, body) {
+          superagent.get(config, function(error, response, body) {
             assert.ok(!response.headers['set-cookie']);
             store.clear(function(error) {
               assert.ifError(error);
-              underlyingDb.collection('mySessions').count({}, function(error, count) {
+              underlyingDb.collection('mySessions').countDocuments({}, function(error, count) {
                 assert.ifError(error);
                 assert.equal(0, count);
                 done();
