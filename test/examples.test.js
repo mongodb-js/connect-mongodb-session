@@ -106,11 +106,7 @@ describe('MongoDBStore', function() {
         underlyingDb.collection('mySessions').countDocuments({}, function(error, count) {
           assert.ifError(error);
           assert.equal(1, count);
-          var config = {
-            url: 'http://localhost:3000',
-            headers: { 'Cookie': 'connect.sid=' + cookie['connect.sid'] }
-          };
-          superagent.get(config, function(error, response, body) {
+          superagent.get('http://localhost:3000').set('Cookie', 'connect.sid=' + cookie['connect.sid']).end(function(error, response) {
             assert.ok(!response.headers['set-cookie']);
             store.clear(function(error) {
               assert.ifError(error);
