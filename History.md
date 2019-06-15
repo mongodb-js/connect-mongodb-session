@@ -1,3 +1,7 @@
+2.2.0 / 2019-06-15
+==================
+ * chore: upgrade mongodb -> 3.2.x
+
 2.1.1 / 2019-02-06
 ==================
  * fix: add back mistakenly removed databaseName parameter #66 #64 [ramicohen303](https://github.com/ramicohen303)
