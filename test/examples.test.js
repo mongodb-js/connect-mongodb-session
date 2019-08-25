@@ -14,6 +14,7 @@ describe('MongoDBStore', function() {
   beforeEach(function(done) {
     mongodb.MongoClient.connect(
       'mongodb://localhost:27017/connect_mongodb_session_test',
+      { useNewUrlParser: true, useUnifiedTopology: true },
       function(error, client) {
         if (error) {
           return done(error);

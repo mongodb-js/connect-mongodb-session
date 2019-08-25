@@ -17,7 +17,7 @@ const OptionsType = new Archetype({
   },
   connectionOptions: {
     $type: Object,
-    $default: () => ({ useNewUrlParser: true })
+    $default: () => ({ useNewUrlParser: true, useUnifiedTopology: true })
   },
   expires: {
     $type: 'number',
@@ -68,7 +68,6 @@ module.exports = function(connect) {
 
     Store.call(this, options);
     this.options = options;
-
     const connOptions = options.connectionOptions;
     mongodb.MongoClient.connect(options.uri, connOptions, function(error, client) {
       if (error) {
