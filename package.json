@@ -19,7 +19,7 @@
     "mongodb": "3.5.x"
   },
   "devDependencies": {
-    "acquit": "1.0.0",
+    "acquit": "1.0.5",
     "acquit-ignore": "0.1.0",
     "acquit-markdown": "0.1.0",
     "cookie": "0.3.1",
