@@ -23,7 +23,7 @@
     "acquit-ignore": "0.1.0",
     "acquit-markdown": "0.1.0",
     "cookie": "0.3.1",
-    "express": "4.14.0",
+    "express": "4.17.0",
     "express-session": "1.15.2",
     "istanbul": "0.4.5",
     "mocha": "3.1.2",
