@@ -15,16 +15,16 @@
     "url": "https://github.com/mongodb-js/connect-mongodb-session.git"
   },
   "dependencies": {
-    "archetype": "0.8.x",
-    "mongodb": "3.2.x"
+    "archetype": "0.10.x",
+    "mongodb": "3.5.x"
   },
   "devDependencies": {
-    "acquit": "1.0.0",
+    "acquit": "1.0.5",
     "acquit-ignore": "0.1.0",
     "acquit-markdown": "0.1.0",
     "cookie": "0.3.1",
-    "express": "4.14.0",
-    "express-session": "1.15.2",
+    "express": "4.17.0",
+    "express-session": "1.17.0",
     "istanbul": "0.4.5",
     "mocha": "3.1.2",
     "strawman": "0.0.1",
