@@ -1,3 +1,7 @@
+2.3.1 / 2020-02-06
+==================
+ * fix: enable `useUnifiedTopology` connection option by default to suppress deprecation warning #77 [alpn](https://github.com/alpn)
+
 2.3.0 / 2020-01-20
 ==================
  * fix: upgrade mongodb -> 3.5.x
