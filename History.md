@@ -1,3 +1,7 @@
+2.3.2 / 2020-05-19
+==================
+ * fix: bump archetype -> 0.11.x #82 [ThomasCrevoisier](https://github.com/ThomasCrevoisier)
+
 2.3.1 / 2020-02-06
 ==================
  * fix: enable `useUnifiedTopology` connection option by default to suppress deprecation warning #77 [alpn](https://github.com/alpn)
