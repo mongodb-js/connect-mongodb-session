@@ -51,6 +51,9 @@ module.exports = function(connect) {
   const Store = connect.Store || connect.session.Store;
 
   const MongoDBStore = function(options, callback) {
+    if (!(this instanceof MongoDBStore)) {
+      return new MongoDBStore(options, callback);
+    }
     const _this = this;
     this._emitter = new EventEmitter();
     this._errorHandler = handleError.bind(this);

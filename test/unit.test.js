@@ -40,7 +40,7 @@ describe('connectMongoDBSession', function() {
 
     it('can specify collection', function(done) {
       var SessionStore = connectMongoDBSession({ Store: StoreStub });
-      var session = new SessionStore({ collection: 'notSessions' });
+      var session = SessionStore({ collection: 'notSessions' });
       assert.equal(session.options.uri, 'mongodb://localhost:27017/test');
       assert.equal(session.options.collection, 'notSessions');
       done();
