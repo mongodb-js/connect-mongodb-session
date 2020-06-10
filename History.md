@@ -1,3 +1,7 @@
+2.3.3 / 2020-06-10
+==================
+ * feat: support creating MongoDBStore without `new` #83
+
 2.3.2 / 2020-05-19
 ==================
  * fix: bump archetype -> 0.11.x #82 [ThomasCrevoisier](https://github.com/ThomasCrevoisier)
