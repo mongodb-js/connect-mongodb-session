@@ -118,3 +118,32 @@ app.get('/', function(req, res) {
 
 server = app.listen(3000);
 ```
+
+## It supports several other options
+
+
+There are several other options you can pass to `new MongoDBStore()`:
+
+
+```javascript
+var express = require('express');
+var session = require('express-session');
+var MongoDBStore = require('connect-mongodb-session')(session);
+
+var store = new MongoDBStore({
+  uri: 'mongodb://localhost:27017/connect_mongodb_session_test',
+  collection: 'mySessions',
+
+  // By default, sessions expire after 2 weeks. The `expires` option lets
+  // you overwrite that by setting the expiration in milliseconds
+  expires: 1000 * 60 * 60 * 24 * 30, // 30 days in milliseconds
+
+  // Lets you set options passed to `MongoClient.connect()`. Useful for
+  // configuring connectivity or working around deprecation warnings.
+  connectionOptions: {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 10000
+  }
+});
+```
