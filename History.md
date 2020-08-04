@@ -1,3 +1,7 @@
+2.4.0 / 2020-08-04
+==================
+ * fix: upgrade to mongodb@3.6
+
 2.3.3 / 2020-06-10
 ==================
  * feat: support creating MongoDBStore without `new` #83
