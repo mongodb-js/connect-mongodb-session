@@ -26,7 +26,7 @@ describe('MongoDBStore', function() {
   });
 
   afterEach(function() {
-    server.close();
+    server && server.close();
   });
 
   /**
@@ -137,7 +137,7 @@ describe('MongoDBStore', function() {
     var numExpectedSources = 2;
     var store = new MongoDBStore(
       {
-        uri: 'mongodb://bad.host:27000/connect_mongodb_session_test?connectTimeoutMS=10',
+        uri: 'mongodb://bad.host:27000/connect_mongodb_session_test?serverSelectionTimeoutMS=100',
         databaseName: 'connect_mongodb_session_test',
         collection: 'mySessions'
       },
@@ -180,7 +180,7 @@ describe('MongoDBStore', function() {
   /**
    * There are several other options you can pass to `new MongoDBStore()`:
    */
-  it('supports several other options', function(done) {
+  it('supports several other options', function() {
     var express = require('express');
     var session = require('express-session');
     var MongoDBStore = require('connect-mongodb-session')(session);
