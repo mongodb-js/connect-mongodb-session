@@ -1,3 +1,7 @@
+2.4.1 / 2020-08-17
+==================
+ * fix: upgrade archetype to remove dependency on standard-error #86 #84
+
 2.4.0 / 2020-08-04
 ==================
  * fix: upgrade to mongodb@3.6
