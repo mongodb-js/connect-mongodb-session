@@ -15,7 +15,7 @@
     "url": "https://github.com/mongodb-js/connect-mongodb-session.git"
   },
   "dependencies": {
-    "archetype": "0.11.x",
+    "archetype": "0.12.x",
     "mongodb": "3.6.x"
   },
   "devDependencies": {
