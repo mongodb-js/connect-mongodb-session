@@ -147,3 +147,31 @@ var store = new MongoDBStore({
   }
 });
 ```
+
+## Azure Cosmos MongoDB support
+
+
+It can support MongoDB instances inside Azure Cosmos. As Cosmos can only support
+time-based index on fields called `_ts`, you will need to update your configuration.
+Unlike in MongoDB, Cosmos starts the timer at the point of document creation so the
+`expiresAfterSeconds` should have the same value as `expires` - as `expires` is in
+milliseconds, the `expiresAfterSeconds` must equal `expires / 1000`.
+
+
+```javascript
+
+var express = require('express');
+var session = require('express-session');
+var MongoDBStore = require('connect-mongodb-session')(session);
+
+var store = new MongoDBStore({
+  uri: 'mongodb://username:password@cosmosdb-name.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@cosmosdb-name@', 
+  databaseName: 'myDb',
+  collection: 'mySessions',
+
+  // Change the expires key name
+  expiresKey: `_ts`,
+  // This controls the life of the document - set to same value as expires / 1000
+  expiresAfterSeconds: 60 * 60 * 24 * 14 
+});
+```

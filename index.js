@@ -33,6 +33,16 @@ const OptionsType = new Archetype({
     $type: 'string',
     $required: false,
     $default: null
+  },
+  expiresKey: {
+    $type: 'string',
+    $required: true,
+    $default: 'expires'
+  },
+  expiresAfterSeconds: {
+    $type: 'number',
+    $required: true,
+    $default: 0
   }
 }).compile('OptionsType');
 
@@ -85,9 +95,12 @@ module.exports = function(connect) {
       _this.client = client;
       _this.db = db;
 
+      const expiresIndex = {};
+      expiresIndex[options.expiresKey] = 1
+
       db.
         collection(options.collection).
-        createIndex({ expires: 1 }, { expireAfterSeconds: 0 }, function(error) {
+        createIndex(expiresIndex, { expireAfterSeconds: options.expiresAfterSeconds }, function(error) {
           if (error) {
             const e = new Error('Error creating index: ' + error.message);
             return _this._errorHandler(e, callback);
@@ -153,7 +166,7 @@ module.exports = function(connect) {
         } else if (sessions) {
           if (sessions) {
             return callback(null, sessions);
-          } 
+          }
         } else {
           return callback();
         }
@@ -217,10 +230,10 @@ module.exports = function(connect) {
     const s = this._generateQuery(id);
     s.session = sess;
     if (session && session.cookie && session.cookie.expires) {
-      s.expires = new Date(session.cookie.expires);
+      s[this.options.expiresKey] = new Date(session.cookie.expires);
     } else {
       const now = new Date();
-      s.expires = new Date(now.getTime() + this.options.expires);
+      s[this.options.expiresKey] = new Date(now.getTime() + this.options.expires);
     }
 
     this.db.collection(this.options.collection).
