@@ -1,3 +1,7 @@
+3.0.0 / 2021-07-19
+==================
+ * BREAKING CHANGE: upgrade to MongoDB driver 4.x for MongoDB 5.0 support #95
+
 2.4.1 / 2020-08-17
 ==================
  * fix: upgrade archetype to remove dependency on standard-error #86 #84
