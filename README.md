@@ -84,7 +84,6 @@ var session = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(session);
 
 var app = express();
-var numExpectedSources = 2;
 var store = new MongoDBStore(
   {
     uri: 'mongodb://bad.host:27000/connect_mongodb_session_test?connectTimeoutMS=10',
