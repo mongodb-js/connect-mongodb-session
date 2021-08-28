@@ -1,3 +1,7 @@
+3.1.0 / 2021-08-28
+==================
+ * feat: add expirescolumn and expiresafterseconds for azure cosmos support #91 [MrSimonEmms](https://github.com/MrSimonEmms)
+
 3.0.0 / 2021-07-19
 ==================
  * BREAKING CHANGE: upgrade to MongoDB driver 4.x for MongoDB 5.0 support #95
