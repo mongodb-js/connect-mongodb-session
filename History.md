@@ -1,3 +1,7 @@
+3.1.1 / 2021-10-04
+==================
+ * fix: upgrade archetype -> 0.13.x
+
 3.1.0 / 2021-08-28
 ==================
  * feat: add expirescolumn and expiresafterseconds for azure cosmos support #91 [MrSimonEmms](https://github.com/MrSimonEmms)
