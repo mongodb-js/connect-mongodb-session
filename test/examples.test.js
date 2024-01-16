@@ -98,7 +98,7 @@ describe('MongoDBStore', function() {
     assert.ok(cookie['connect.sid']);
     count = await underlyingDb.collection('mySessions').countDocuments({});
     assert.equal(count, 1);
-    response = superagent.get('http://localhost:3000').set('Cookie', 'connect.sid=' + cookie['connect.sid']).end();
+    response = await superagent.get('http://localhost:3000').set('Cookie', 'connect.sid=' + cookie['connect.sid']);
     assert.ok(!response.headers['set-cookie']);
     await store.clear();
     count = await underlyingDb.collection('mySessions').countDocuments({});

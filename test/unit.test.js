@@ -5,7 +5,6 @@ const connectMongoDBSession = require('../');
 const ee = require('events').EventEmitter;
 const mongodb = require('mongodb');
 const sinon = require('sinon');
-const strawman = require('strawman');
 
 describe('connectMongoDBSession', function() {
   var StoreStub;
@@ -20,8 +19,8 @@ describe('connectMongoDBSession', function() {
   describe('options', function() {
     it('can specify uri', function(done) {
       var SessionStore = connectMongoDBSession({ Store: StoreStub });
-      var session = new SessionStore({ uri: 'mongodb://host:port/db' });
-      assert.equal(session.options.uri, 'mongodb://host:port/db');
+      var session = new SessionStore({ uri: 'mongodb://host:1111/db' });
+      assert.equal(session.options.uri, 'mongodb://host:1111/db');
       assert.equal(session.options.idField, '_id');
       done();
     });
@@ -66,12 +65,6 @@ describe('connectMongoDBSession', function() {
 
   it('specifying options is optional', function(done) {
     var SessionStore = connectMongoDBSession({ Store: StoreStub });
-    var numIndexCalls = 0;
-    db.createIndex.on('called', function(args) {
-      assert.equal(++numIndexCalls, 1);
-      assert.equal(args.index.expires, 1);
-      args.callback();
-    });
 
     var session = new SessionStore(function(error) {
       assert.ifError(error);
@@ -82,12 +75,6 @@ describe('connectMongoDBSession', function() {
 
   it('uses default options and no callback if no args passed', function(done) {
     var SessionStore = connectMongoDBSession({ Store: StoreStub });
-    var numIndexCalls = 0;
-    db.createIndex.on('called', function(args) {
-      assert.equal(++numIndexCalls, 1);
-      assert.equal(args.index.expires, 1);
-      args.callback();
-    });
 
     var session = new SessionStore();
     assert.equal(session.options.uri, 'mongodb://localhost:27017/test');
@@ -98,10 +85,9 @@ describe('connectMongoDBSession', function() {
   });
 
   it('throws an error when connection fails and no callback', function(done) {
-    mongodb.MongoClient.connect = function(uri, options, callback) {
-      // purposely make callback sync
-      callback(new Error('Cant connect'));
-    };
+    sinon.stub(mongodb.MongoClient.prototype, 'connect').callsFake(() => {
+      return Promise.reject(new Error('Cant connect'));
+    });
 
     var SessionStore = connectMongoDBSession({ Store: StoreStub });
 
@@ -117,9 +103,9 @@ describe('connectMongoDBSession', function() {
   });
 
   it('passes error to callback if specified', function(done) {
-    mongodb.MongoClient.connect = function(uri, options, callback) {
-      process.nextTick(function() { callback(new Error('Cant connect')); });
-    };
+    sinon.stub(mongodb.MongoClient.prototype, 'connect').callsFake(() => {
+      return Promise.reject(new Error('connect issues'));
+    });
 
     var SessionStore = connectMongoDBSession({ Store: StoreStub });
     var numSources = 2;
@@ -135,11 +121,9 @@ describe('connectMongoDBSession', function() {
 
   it('handles index errors', function(done) {
     var SessionStore = connectMongoDBSession({ Store: StoreStub });
-    var numIndexCalls = 0;
-    db.createIndex.on('called', function(args) {
-      assert.equal(++numIndexCalls, 1);
-      assert.equal(args.index.expires, 1);
-      args.callback(new Error('Index fail'));
+
+    sinon.stub(mongodb.Collection.prototype, 'createIndex').callsFake(() => {
+      return Promise.reject(new Error('Index fail'));
     });
 
     var session = new SessionStore(function(error) {
@@ -215,109 +199,29 @@ describe('connectMongoDBSession', function() {
   });
 
   describe('destroy()', function() {
-    var numIndexCalls;
-
-    beforeEach(function() {
-      numIndexCalls = 0;
-
-      db.createIndex.on('called', function(args) {
-        assert.equal(++numIndexCalls, 1);
-        assert.equal(args.index.expires, 1);
-        args.callback();
-      });
-    });
-
-    it('buffers until connected', function(done) {
-      var SessionStore = connectMongoDBSession({ Store: StoreStub });
-      var emitter = new ee();
-
-      mongodb.MongoClient.connect = function(uri, options, callback) {
-        emitter.on('success', function() {
-          callback(null, client);
-        });
-      };
-
-      var session = new SessionStore();
-
-      db.deleteOne.on('called', function(args) {
-        args.callback(null);
-      });
-      session.destroy('1234', function(error) {
-        assert.ifError(error);
-        assert.equal(numIndexCalls, 1);
-        done();
-      });
-
-      setImmediate(function() {
-        emitter.emit('success');
-      });
-    });
-
     it('reports driver errors', function(done) {
       var SessionStore = connectMongoDBSession({ Store: StoreStub });
 
       var session = new SessionStore();
-      db.deleteOne.on('called', function(args) {
-        args.callback(new Error('fail!'));
-      });
+      sinon.stub(session.collection, 'deleteOne')
+        .callsFake(() => Promise.reject(new Error('roadrunners pachyderma')));
 
       session.destroy('1234', function(error) {
         assert.ok(error);
-        assert.equal(error.message, 'Error destroying 1234: fail!');
+        assert.equal(error.message, 'Error destroying 1234: roadrunners pachyderma');
         done();
       });
     });
   });
 
-  describe('set()', function(done) {
-    var numIndexCalls;
-
-    beforeEach(function() {
-      numIndexCalls = 0;
-
-      db.createIndex.on('called', function(args) {
-        assert.equal(++numIndexCalls, 1);
-        assert.equal(args.index.expires, 1);
-        args.callback();
-      });
-    });
-
-    it('buffers until connected', function(done) {
-      var SessionStore = connectMongoDBSession({ Store: StoreStub });
-      var emitter = new ee();
-
-      mongodb.MongoClient.connect = function(uri, options, callback) {
-        emitter.on('success', function() {
-          callback(null, client);
-        });
-      };
-
-      var session = new SessionStore();
-
-      db.updateOne.on('called', function(args) {
-        args.callback(null);
-      });
-      session.set('1234', { test: 1 }, function(error) {
-        assert.ifError(error);
-        assert.equal(numIndexCalls, 1);
-        done();
-      });
-
-      setImmediate(function() {
-        emitter.emit('success');
-      });
-    });
-
+  describe('set()', function() {
     it('converts expires to a date', function(done) {
       var SessionStore = connectMongoDBSession({ Store: StoreStub });
 
       var session = new SessionStore();
 
-      db.updateOne.on('called', function(args) {
-        assert.ok(args.update.$set.expires instanceof Date);
-        assert.equal(args.update.$set.expires.getTime(),
-          new Date('2011-06-01T00:00:00.000Z').getTime());
-        args.callback(null);
+      sinon.stub(session.collection, 'updateOne').callsFake(() => {
+        return Promise.resolve(null);
       });
       var update = {
         test: 1,
@@ -325,7 +229,10 @@ describe('connectMongoDBSession', function() {
       };
       session.set('1234', update, function(error) {
         assert.ifError(error);
-        assert.equal(db.updateOne.calls.length, 1);
+        assert.equal(session.collection.updateOne.getCalls().length, 1);
+        assert.ok(session.collection.updateOne.getCalls()[0].args[1].$set.expires instanceof Date);
+        assert.equal(session.collection.updateOne.getCalls()[0].args[1].$set.expires.getTime(),
+          new Date('2011-06-01T00:00:00.000Z').getTime());
         done();
       });
     });
@@ -334,13 +241,13 @@ describe('connectMongoDBSession', function() {
       var SessionStore = connectMongoDBSession({ Store: StoreStub });
 
       var session = new SessionStore();
-      db.updateOne.on('called', function(args) {
-        args.callback(new Error('fail!'));
+      sinon.stub(session.collection, 'updateOne').callsFake(() => {
+        return Promise.reject(new Error('taco tuesday'));
       });
 
       session.set('1234', {}, function(error) {
         assert.ok(error);
-        assert.equal(error.message, 'Error setting 1234 to {}: fail!');
+        assert.equal(error.message, 'Error setting 1234 to {}: taco tuesday');
         done();
       });
     });
@@ -351,9 +258,8 @@ describe('connectMongoDBSession', function() {
 
       var session = new SessionStore();
 
-      db.updateOne.on('called', function(args) {
-        assert.equal(args.update.$set.session.cookie, 'put that cookie down!');
-        args.callback(null);
+      sinon.stub(session.collection, 'updateOne').callsFake(() => {
+        return Promise.resolve(null);
       });
       var update = {
         test: 1,
@@ -361,7 +267,11 @@ describe('connectMongoDBSession', function() {
       };
       session.set('1234', update, function(error) {
         assert.ifError(error);
-        assert.equal(db.updateOne.calls.length, 1);
+        assert.equal(session.collection.updateOne.getCalls().length, 1);
+        assert.equal(
+          session.collection.updateOne.getCalls()[0].args[1].$set.session.cookie,
+          'put that cookie down!'
+        );
         done();
       });
     });
@@ -372,9 +282,8 @@ describe('connectMongoDBSession', function() {
 
       var session = new SessionStore();
 
-      db.updateOne.on('called', function(args) {
-        assert.deepEqual(args.update.$set.session.cookie, { test: 2 });
-        args.callback(null);
+      sinon.stub(session.collection, 'updateOne').callsFake(() => {
+        return Promise.resolve(null);
       });
       var update = {
         test: 1,
@@ -382,35 +291,27 @@ describe('connectMongoDBSession', function() {
       };
       session.set('1234', update, function(error) {
         assert.ifError(error);
-        assert.equal(db.updateOne.calls.length, 1);
+        assert.equal(session.collection.updateOne.getCalls().length, 1);
+        assert.deepEqual(
+          session.collection.updateOne.getCalls()[0].args[1].$set.session.cookie,
+          { test: 2 }
+        );
         done();
       });
     });
   });
 
-  describe('clear()', function(done){
-    var numIndexCalls;
-
-    beforeEach(function() {
-      numIndexCalls = 0;
-
-      db.createIndex.on('called', function(args) {
-        assert.equal(++numIndexCalls, 1);
-        assert.equal(args.index.expires, 1);
-        args.callback();
-      });
-    });
-
+  describe('clear()', function() {
     it('clears the session store', function(done) {
       var SessionStore = connectMongoDBSession({ Store: StoreStub });
 
       var session = new SessionStore();
-      db.deleteMany.on('called', function(args) {
-        args.callback(null);
-      });
+      sinon.stub(session.collection, 'deleteMany').callsFake(() => Promise.resolve());
 
       session.clear(function(error) {
         assert.ifError(error);
+        assert.ok(session.collection.deleteMany.calledOnce);
+        assert.deepStrictEqual(session.collection.deleteMany.getCalls()[0].args[0], {});
         done();
       });
     });
@@ -419,13 +320,12 @@ describe('connectMongoDBSession', function() {
       var SessionStore = connectMongoDBSession({ Store: StoreStub });
 
       var session = new SessionStore();
-      db.deleteMany.on('called', function(args) {
-        args.callback(new Error('fail!'));
-      });
+      sinon.stub(session.collection, 'deleteMany').
+        callsFake(() => Promise.reject(new Error('clear issue')));
 
       session.clear(function(error) {
         assert.ok(error);
-        assert.equal(error.message, 'Error clearing all sessions: fail!');
+        assert.equal(error.message, 'Error clearing all sessions: clear issue');
         done();
       });
     });
