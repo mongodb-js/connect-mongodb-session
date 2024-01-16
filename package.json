@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "archetype": "0.13.x",
-    "mongodb": "4.x"
+    "mongodb": "5.x"
   },
   "devDependencies": {
     "acquit": "1.0.5",
@@ -27,6 +27,7 @@
     "express-session": "1.17.0",
     "istanbul": "0.4.5",
     "mocha": "3.1.2",
+    "sinon": "17.0.1",
     "strawman": "0.0.1",
     "superagent": "3.x"
   },
