@@ -15,7 +15,8 @@ describe('MongoDBStore', function() {
 
   beforeEach(async function() {
     const client = await mongodb.MongoClient.connect(
-      'mongodb://localhost:27017/connect_mongodb_session_test'
+      'mongodb://localhost:27017/connect_mongodb_session_test',
+      { serverSelectionTimeoutMS: 5000 }
     );
     underlyingDb = client.db('connect_mongodb_session_test');
     await client.db('connect_mongodb_session_test').collection('mySessions').deleteMany({});
