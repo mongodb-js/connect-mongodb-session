@@ -28,7 +28,7 @@ describe('connectMongoDBSession', function() {
     it('can specify collection', function(done) {
       var SessionStore = connectMongoDBSession({ Store: StoreStub });
       var session = SessionStore({ collection: 'notSessions' });
-      assert.equal(session.options.uri, 'mongodb://localhost:27017/test');
+      assert.equal(session.options.uri, 'mongodb://127.0.0.1:27017/test');
       assert.equal(session.options.collection, 'notSessions');
       done();
     });
@@ -36,7 +36,7 @@ describe('connectMongoDBSession', function() {
     it('can specify expires', function(done) {
       var SessionStore = connectMongoDBSession({ Store: StoreStub });
       var session = new SessionStore({ expires: 25 });
-      assert.equal(session.options.uri, 'mongodb://localhost:27017/test');
+      assert.equal(session.options.uri, 'mongodb://127.0.0.1:27017/test');
       assert.equal(session.options.expires, 25);
       done();
     });
@@ -44,7 +44,7 @@ describe('connectMongoDBSession', function() {
     it('can specify idField', function(done) {
       var SessionStore = connectMongoDBSession({ Store: StoreStub });
       var session = new SessionStore({ idField: 'sessionId' });
-      assert.equal(session.options.uri, 'mongodb://localhost:27017/test');
+      assert.equal(session.options.uri, 'mongodb://127.0.0.1:27017/test');
       assert.deepEqual(session._generateQuery('1234'), { sessionId: '1234' });
       done();
     });
@@ -70,14 +70,14 @@ describe('connectMongoDBSession', function() {
       assert.ifError(error);
       done();
     });
-    assert.equal(session.options.uri, 'mongodb://localhost:27017/test');
+    assert.equal(session.options.uri, 'mongodb://127.0.0.1:27017/test');
   });
 
   it('uses default options and no callback if no args passed', function(done) {
     var SessionStore = connectMongoDBSession({ Store: StoreStub });
 
     var session = new SessionStore();
-    assert.equal(session.options.uri, 'mongodb://localhost:27017/test');
+    assert.equal(session.options.uri, 'mongodb://127.0.0.1:27017/test');
 
     session.on('connected', function() {
       done();

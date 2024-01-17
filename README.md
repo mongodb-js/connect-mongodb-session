@@ -41,7 +41,7 @@ var MongoDBStore = require('connect-mongodb-session')(session);
 
 var app = express();
 var store = new MongoDBStore({
-  uri: 'mongodb://localhost:27017/connect_mongodb_session_test',
+  uri: 'mongodb://127.0.0.1:27017/connect_mongodb_session_test',
   collection: 'mySessions'
 });
 
@@ -130,7 +130,7 @@ var session = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(session);
 
 var store = new MongoDBStore({
-  uri: 'mongodb://localhost:27017/connect_mongodb_session_test',
+  uri: 'mongodb://127.0.0.1:27017/connect_mongodb_session_test',
   collection: 'mySessions',
 
   // By default, sessions expire after 2 weeks. The `expires` option lets

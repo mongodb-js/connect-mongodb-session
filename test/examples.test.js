@@ -15,7 +15,7 @@ describe('MongoDBStore', function() {
 
   beforeEach(async function() {
     const client = await mongodb.MongoClient.connect(
-      'mongodb://localhost:27017/connect_mongodb_session_test',
+      'mongodb://127.0.0.1:27017/connect_mongodb_session_test',
       { serverSelectionTimeoutMS: 5000 }
     );
     underlyingDb = client.db('connect_mongodb_session_test');
@@ -50,7 +50,7 @@ describe('MongoDBStore', function() {
 
     var app = express();
     var store = new MongoDBStore({
-      uri: 'mongodb://localhost:27017/connect_mongodb_session_test',
+      uri: 'mongodb://127.0.0.1:27017/connect_mongodb_session_test',
       collection: 'mySessions'
     });
     // acquit:ignore:start
@@ -93,13 +93,13 @@ describe('MongoDBStore', function() {
     let count = await underlyingDb.collection('mySessions').countDocuments({});
     assert.equal(0, count);
 
-    let response = await superagent.get('http://localhost:3000');
+    let response = await superagent.get('http://127.0.0.1:3000');
     assert.equal(1, response.headers['set-cookie'].length);
     var cookie = require('cookie').parse(response.headers['set-cookie'][0]);
     assert.ok(cookie['connect.sid']);
     count = await underlyingDb.collection('mySessions').countDocuments({});
     assert.equal(count, 1);
-    response = await superagent.get('http://localhost:3000').set('Cookie', 'connect.sid=' + cookie['connect.sid']);
+    response = await superagent.get('http://127.0.0.1:3000').set('Cookie', 'connect.sid=' + cookie['connect.sid']);
     assert.ok(!response.headers['set-cookie']);
     await store.clear();
     count = await underlyingDb.collection('mySessions').countDocuments({});
@@ -169,7 +169,7 @@ describe('MongoDBStore', function() {
     var MongoDBStore = require('connect-mongodb-session')(session);
 
     var store = new MongoDBStore({
-      uri: 'mongodb://localhost:27017/connect_mongodb_session_test',
+      uri: 'mongodb://127.0.0.1:27017/connect_mongodb_session_test',
       collection: 'mySessions',
 
       // By default, sessions expire after 2 weeks. The `expires` option lets
