@@ -185,11 +185,6 @@ module.exports = function(connect) {
 
   MongoDBStore.prototype.clear = function(callback) {
     const _this = this;
-    if (!this.db) {
-      return this._emitter.once('connected', function() {
-        _this.clear.call(_this, callback);
-      });
-    }
 
     this.collection.deleteMany({}).
       then(() => {
@@ -203,12 +198,6 @@ module.exports = function(connect) {
 
   MongoDBStore.prototype.set = function(id, session, callback) {
     const _this = this;
-
-    if (!this.db) {
-      return this._emitter.once('connected', function() {
-        _this.set.call(_this, id, session, callback);
-      });
-    }
 
     const sess = {};
     for (const key in session) {
