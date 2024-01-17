@@ -1,3 +1,7 @@
+4.0.0 / 2024-01-17
+==================
+ * BREAKING CHANGE: upgrade to MongoDB driver 5.x
+
 3.1.1 / 2021-10-04
 ==================
  * fix: upgrade archetype -> 0.13.x
