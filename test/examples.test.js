@@ -1,3 +1,5 @@
+'use strict';
+
 var assert = require('assert');
 var superagent = require('superagent');
 var mongodb = require('mongodb');
@@ -11,18 +13,12 @@ describe('MongoDBStore', function() {
   var underlyingDb;
   var server;
 
-  beforeEach(function(done) {
-    mongodb.MongoClient.connect(
-      'mongodb://localhost:27017/connect_mongodb_session_test',
-      function(error, client) {
-        if (error) {
-          return done(error);
-        }
-        underlyingDb = client.db('connect_mongodb_session_test');
-        client.db('connect_mongodb_session_test').collection('mySessions').deleteMany({}, function(error) {
-          return done(error);
-        });
-      });
+  beforeEach(async function() {
+    const client = await mongodb.MongoClient.connect(
+      'mongodb://localhost:27017/connect_mongodb_session_test'
+    );
+    underlyingDb = client.db('connect_mongodb_session_test');
+    await client.db('connect_mongodb_session_test').collection('mySessions').deleteMany({});
   });
 
   afterEach(function() {
@@ -46,7 +42,7 @@ describe('MongoDBStore', function() {
    *  that you can use the MongoDBStore class in a synchronous-like style: the
    *  module will manage the internal connection state for you.
    */
-  it('can store sessions for Express 4', function(done) {
+  it('can store sessions for Express 4', async function() {
     var express = require('express');
     var session = require('express-session');
     var MongoDBStore = require('connect-mongodb-session')(session);
@@ -93,34 +89,20 @@ describe('MongoDBStore', function() {
 
     server = app.listen(3000);
 
-    // acquit:ignore:start
-    underlyingDb.collection('mySessions').countDocuments({}, function(error, count) {
-      assert.ifError(error);
-      assert.equal(0, count);
+    let count = await underlyingDb.collection('mySessions').countDocuments({});
+    assert.equal(0, count);
 
-      superagent.get('http://localhost:3000', function(error, response) {
-        assert.ifError(error);
-        assert.equal(1, response.headers['set-cookie'].length);
-        var cookie = require('cookie').parse(response.headers['set-cookie'][0]);
-        assert.ok(cookie['connect.sid']);
-        underlyingDb.collection('mySessions').countDocuments({}, function(error, count) {
-          assert.ifError(error);
-          assert.equal(1, count);
-          superagent.get('http://localhost:3000').set('Cookie', 'connect.sid=' + cookie['connect.sid']).end(function(error, response) {
-            assert.ok(!response.headers['set-cookie']);
-            store.clear(function(error) {
-              assert.ifError(error);
-              underlyingDb.collection('mySessions').countDocuments({}, function(error, count) {
-                assert.ifError(error);
-                assert.equal(0, count);
-                done();
-              });
-            });
-          });
-        });
-      });
-    });
-    // acquit:ignore:end
+    let response = await superagent.get('http://localhost:3000');
+    assert.equal(1, response.headers['set-cookie'].length);
+    var cookie = require('cookie').parse(response.headers['set-cookie'][0]);
+    assert.ok(cookie['connect.sid']);
+    count = await underlyingDb.collection('mySessions').countDocuments({});
+    assert.equal(count, 1);
+    response = await superagent.get('http://localhost:3000').set('Cookie', 'connect.sid=' + cookie['connect.sid']);
+    assert.ok(!response.headers['set-cookie']);
+    await store.clear();
+    count = await underlyingDb.collection('mySessions').countDocuments({});
+    assert.equal(count, 0);
   });
 
   /**
