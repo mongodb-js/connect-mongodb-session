@@ -1,3 +1,7 @@
+5.0.0 / 2024-01-25
+==================
+ * BREAKING CHANGE: use MongoDB Node driver 6.x by default, retain support for MongoDB Node driver 5.x
+
 4.0.0 / 2024-01-17
 ==================
  * BREAKING CHANGE: upgrade to MongoDB driver 5.x
