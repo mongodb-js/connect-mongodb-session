@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "archetype": "0.13.x",
-    "mongodb": "5.x"
+    "mongodb": "5.x || 6.x"
   },
   "devDependencies": {
     "acquit": "1.0.5",

@@ -140,8 +140,6 @@ var store = new MongoDBStore({
   // Lets you set options passed to `MongoClient.connect()`. Useful for
   // configuring connectivity or working around deprecation warnings.
   connectionOptions: {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     serverSelectionTimeoutMS: 10000
   }
 });

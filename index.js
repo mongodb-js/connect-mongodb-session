@@ -17,7 +17,7 @@ const OptionsType = new Archetype({
   },
   connectionOptions: {
     $type: Object,
-    $default: () => ({ useNewUrlParser: true, useUnifiedTopology : true })
+    $default: null
   },
   expires: {
     $type: 'number',
