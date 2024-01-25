@@ -10,11 +10,12 @@ jobs:
       matrix:
         node: [16, 18, 20]
         os: [ubuntu-20.04]
+        mongodbNodeDriver: [5, 6]
         include:
           - os: ubuntu-20.04
             mongo-os: ubuntu2004
             mongo: 5.0.2
-    name: Node ${{ matrix.node }} MongoDB ${{ matrix.mongo }}
+    name: Node ${{ matrix.node }} MongoDB ${{ matrix.mongo }} Node Driver ${{ matrix.mongodbNodeDriver }}
     steps:
       - uses: actions/checkout@v2
 
@@ -24,6 +25,7 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - run: npm install
+      - run: npm install mongodb@${{ matrix.mongodbNodeDriver }}
 
       - name: Setup
         run: |
